@@ -85,8 +85,8 @@ public class Olawars extends Activity {
         swipelistview.setSwipeMode(SwipeListView.SWIPE_MODE_BOTH); // there are five swiping modes
         swipelistview.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_NONE); //there are four swipe actions 
         swipelistview.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
-        swipelistview.setOffsetLeft(convertDpToPixel(40f)); // left side offset
-        swipelistview.setOffsetRight(convertDpToPixel(40f)); // right side offset
+        swipelistview.setOffsetLeft(convertDpToPixel(50f)); // left side offset
+        swipelistview.setOffsetRight(convertDpToPixel(50f)); // right side offset
         swipelistview.setAnimationTime(400); // Animation time
         swipelistview.setSwipeCloseAllItemsWhenMoveList(true);
         swipelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
