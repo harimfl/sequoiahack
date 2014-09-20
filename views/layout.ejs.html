@@ -1,0 +1,159 @@
+<!DOCTYPE html5>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Ola Wars :: Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/toggle-switch.css" rel="stylesheet">
+    <link href="//www.fuelcdn.com/fuelux/2.4.1/css/fuelux.min.css" rel="stylesheet" type="text/css">
+    <link href="//www.fuelcdn.com/fuelux/2.4.1/css/fuelux-responsive.css" rel="stylesheet" type="text/css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      #experiment_list > li {
+        border-bottom: 1px solid #eee;
+        padding:5px;
+      }
+      #experiment_list > li:hover {
+        cursor: pointer;
+      }
+      .modal-body {
+        max-height: 800px;
+      }
+      .table th, .table td {
+        border-top: 1px dotted #eee;
+      }
+      .modal-footer {
+        background-color: #fff;
+      }
+      .modal-header {
+        background-color: #666;
+        border-bottom: 1px solid #444;
+      }
+      .modal-header h3 {
+        color: #ccc;
+      }
+      .modal-header a {
+        color: #ccc; 
+      }
+    </style>
+
+    <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery-1.7.1.min.js"><\/script>')</script>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="img/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-114x114.png">
+  </head>
+
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#"></a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li id="nav-home" class="active"><a href="/">Admin Home</a></li> 
+              <li id="nav-users" class=""><a href="/users"><i class="fa fa-users">&nbsp;</i>Users</a></li>
+              <li id="nav-experiments" class=""><a href="/experiments"><i class="fa fa-align-left">&nbsp;</i>Experiments</a></li>
+              <li id="nav-notices" class=""><a href="/notices"><i class="fa fa-align-left">&nbsp;</i>Notices</a></li>
+              <li id="nav-stats" class=""><a href="/stats"><i class="fa fa-align-left">&nbsp;</i>Stats</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    <div class="progress progress-danger progress-striped active" style="margin-top:-32px;">
+      <div class="bar" style="width: 100%;"></div>
+    </div>
+
+    <%- body %>
+
+    <!-- Some JavaScript, placed at the end of the document so the pages load faster -->
+
+
+    <!-- Need mroe Bootstrap features? Uncomment some lines below. -->
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      function isActive(viewLocation) { 
+        return viewLocation === window.location.pathname;
+      };
+      $(document).ready(function() {
+        if(isActive('/experiments')) {
+          $('#nav-experiments').addClass("active");
+          $('#nav-notices').removeClass("active");
+          $('#nav-users').removeClass("active");
+          $('#nav-home').removeClass("active");
+        } else if(isActive('/home')) {
+          $('#nav-home').addClass("active");
+          $('#nav-notices').removeClass("active");
+          $('#nav-users').removeClass("active");
+          $('#nav-experiments').removeClass("active");
+        } else if(isActive('/users')) { 
+          $('#nav-users').addClass("active");
+          $('#nav-notices').removeClass("active");
+          $('#nav-experiments').removeClass("active");
+          $('#nav-home').removeClass("active");
+        } else if(isActive('/notices')) {
+          $('#nav-notices').addClass("active");
+          $('#nav-users').removeClass("active");
+          $('#nav-experiments').removeClass("active");
+          $('#nav-home').removeClass("active");
+        }
+      });
+    </script>
+
+    <!--
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+    -->
+
+
+    <!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID. -->
+    <!--
+    <script>
+      var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview'],['_trackPageLoadTime']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+    -->
+
+    <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+         chromium.org/developers/how-tos/chrome-frame-getting-started -->
+    <!--[if lt IE 7 ]>
+      <script defer src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+      <script defer>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+    <![endif]-->
+  </body>
+</html>
