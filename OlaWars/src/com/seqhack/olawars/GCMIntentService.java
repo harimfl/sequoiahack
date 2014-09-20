@@ -19,7 +19,7 @@ public class GCMIntentService extends GCMBaseIntentService
     public static final String TAG = GCMIntentService.class.getName();
     
     public GCMIntentService() {
-        super(bingo.SENDER_ID);
+        super("925617659837");
     }
 
     @Override
@@ -36,7 +36,7 @@ public class GCMIntentService extends GCMBaseIntentService
         String action = "Tap to play now!"; 
 
     	mManager = (NotificationManager) this.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-    	Intent intent1 = new Intent(this.getApplicationContext(), bingo.class);
+    	Intent intent1 = new Intent(this.getApplicationContext(), Olawars.class);
     	
     	JSONObject paramList = new JSONObject();
     	try {
@@ -66,7 +66,7 @@ public class GCMIntentService extends GCMBaseIntentService
 	    
 	    notification.defaults |= Notification.DEFAULT_SOUND;
 	    
-	    if((bingo._staticInstance != null) && (!bingo.is_app_on_foreground)) {
+	    if((Olawars._staticInstance != null)) {
 	    	mManager.notify(1, notification);
 	    }
     }
