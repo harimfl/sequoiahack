@@ -167,81 +167,15 @@ public class Olawars extends Activity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_send_pn1:
-            	notify1();
+            	//notify1();
                 return true;
             case R.id.action_send_pn2:
-            	notify1();
+            	//notify1();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-    
-    public void notify1() {
-    	// Using RemoteViews to bind custom layouts into Notification
-        RemoteViews remoteViews = new RemoteViews(getPackageName(),R.layout.notification_layout);
- 
-        // Set Notification Title
-        String strtitle = getString(R.string.customnotificationtitle);
-        // Set Notification Text
-        String strtext = getString(R.string.customnotificationtext);
- 
-        // Open NotificationView Class on Notification Click
-        Intent intent = new Intent(this, NotificationView.class);
-        // Send data to NotificationView Class
-        intent.putExtra("title", strtitle);
-        intent.putExtra("text", strtext);
-        
-        // Open NotificationView.java Activity
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
- 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setAutoCancel(true).setContentIntent(pIntent).setContent(remoteViews);
-
-        remoteViews.setTextViewText(R.id.notiftext1, "Something I want");
-        remoteViews.setViewVisibility(R.id.cardback2, View.INVISIBLE);
-        
-        String snuid = "param6";
-		remoteViews.setImageViewBitmap(R.id.cardback33, getBitmapFromURL("https://graph.facebook.com/" + snuid + "/picture?type=normal&height=150&width=150", snuid));
- 
-        // Create Notification Manager
-        NotificationManager notificationmanager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // Build Notification with Notification Manager
-        notificationmanager.notify(0, builder.build());
-    	
-    	
-    }
-    
-	public Bitmap getBitmapFromURL(String strURL, String senderId) {
-		try {
-			URL url = new URL(strURL);
-			HttpURLConnection connection = (HttpURLConnection) url
-					.openConnection();
-			// set up some things on the connection
-			connection.setRequestMethod("GET");
-			connection.setDoOutput(false);
-			connection.connect();
-
-			File imgFile = new File(this.getApplicationContext().getFilesDir().getPath() + "/profilePic/", senderId + ".jpg");
-			FileOutputStream fileOutput = new FileOutputStream(imgFile);
-
-			InputStream input = connection.getInputStream();
-
-			byte[] buffer = new byte[1024];
-			int bufferLength = 0;
-
-			while ((bufferLength = input.read(buffer)) > 0) {
-				fileOutput.write(buffer, 0, bufferLength);
-			}
-			fileOutput.close();
-
-			Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-			return myBitmap;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
 	
 	/**
      * Check the device to make sure it has the Google Play Services APK. If
@@ -367,4 +301,12 @@ public class Olawars extends Activity {
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
     }
+    
+//    @Override
+//    public void onPause() {
+//    	if (mWakeLock.isHeld())
+//    	    mWakeLock.release();
+//        super.onPause();
+//    }
+//    
 }
