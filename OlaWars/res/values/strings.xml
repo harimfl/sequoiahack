@@ -7,5 +7,11 @@
     <string name="title_section3">Section 3</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
+    <string name="action_send_1">Send 1</string>
+    <string name="action_send_2">Send 2</string>
+    <string name="customnotificationtitle">asdf1</string>
+    <string name="customnotificationtext">asdf4</string>
+    <string name="customnotificationticker">asdf2</string>
+    <string name="notification">asdf3</string>
+    <string name="customnotification">asdf3</string>
 </resources>

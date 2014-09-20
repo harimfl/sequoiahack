@@ -8,9 +8,17 @@ import com.fortysevendeg.swipelistview.SwipeListView;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.RemoteViews;
 
 public class Olawars extends Activity {
 
@@ -116,4 +124,64 @@ public class Olawars extends Activity {
         return true;
     }
     
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_send_pn1:
+            	notify();
+                return true;
+            case R.id.action_send_pn2:
+            	notify();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    public void notify1() {
+    	// Using RemoteViews to bind custom layouts into Notification
+        RemoteViews remoteViews = new RemoteViews(getPackageName(),R.layout.notification_layout);
+ 
+        // Set Notification Title
+        String strtitle = getString(R.string.customnotificationtitle);
+        // Set Notification Text
+        String strtext = getString(R.string.customnotificationtext);
+ 
+        // Open NotificationView Class on Notification Click
+        Intent intent = new Intent(this, NotificationView.class);
+        // Send data to NotificationView Class
+        intent.putExtra("title", strtitle);
+        intent.putExtra("text", strtext);
+        // Open NotificationView.java Activity
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+ 
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                // Set Icon
+                .setSmallIcon(R.drawable.choice_selected)
+                // Set Ticker Message
+                .setTicker(getString(R.string.customnotificationticker))
+                // Dismiss Notification
+                .setAutoCancel(true)
+                // Set PendingIntent into Notification
+                .setContentIntent(pIntent)
+                // Set RemoteViews into Notification
+                .setContent(remoteViews);
+ 
+        // Locate and set the Image into customnotificationtext.xml ImageViews
+        remoteViews.setImageViewResource(R.id.imagenotileft,R.drawable.ic_launcher);
+        remoteViews.setImageViewResource(R.id.imagenotiright,R.drawable.choice_unselected);
+ 
+        // Locate and set the Text into customnotificationtext.xml TextViews
+        remoteViews.setTextViewText(R.id.title,getString(R.string.customnotificationtitle));
+        remoteViews.setTextViewText(R.id.text,getString(R.string.customnotificationtext));
+ 
+        // Create Notification Manager
+        NotificationManager notificationmanager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // Build Notification with Notification Manager
+        notificationmanager.notify(0, builder.build());
+    	
+    	
+    }
 }
