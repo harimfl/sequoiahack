@@ -1,25 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:background="@drawable/notification_bg">
+    android:layout_height="match_parent"
+    android:background="@drawable/notification_bg"
+    android:textAlignment="center" >
 
     <ImageView
         android:id="@+id/cardback2"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/cardback1"
-        android:layout_marginRight="-20dp"
-        android:src="@drawable/notification_people" />
+        android:contentDescription="@string/generic_content_desc"
+        android:src="@drawable/notification_people_cropped" />
+
 
     <ImageView
+        android:id="@+id/cardback33"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/cardback1"
+        android:contentDescription="@string/generic_content_desc"
+        android:src="@drawable/notification_frame" />
+    
+    <ImageView
+        android:id="@+id/cardback3"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/cardback1"
+        android:contentDescription="@string/generic_content_desc"
+        android:src="@drawable/notification_frame" />
+    
+    <ImageView
+        android:id="@+id/cardback4"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/cardback1"
+        android:contentDescription="@string/generic_content_desc"
+        android:src="@drawable/notification_people"/>
+
+    <ImageView
+        android:id="@+id/cardback55"
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:rotation="12"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/cardback1"
+        android:contentDescription="@string/generic_content_desc"
+        android:src="@drawable/notification_frame" />    
+    
+    <ImageView
+        android:id="@+id/cardback5"
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:rotation="12"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/cardback1"
+        android:contentDescription="@string/generic_content_desc"
+        android:src="@drawable/notification_frame" />
+    
+    <ImageView
         android:id="@+id/cardback1"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="30dp"
+        android:layout_marginRight="10dp"
+        android:contentDescription="@string/generic_content_desc"
         android:src="@drawable/notification_car_crash" />
+
+    <TextView
+        android:id="@+id/notiftext1"
+        android:layout_width="200dp"
+        android:layout_height="72dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:typeface="sans" />
 
 </RelativeLayout>

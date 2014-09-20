@@ -1,5 +1,11 @@
 package com.seqhack.olawars;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +19,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RemoteViews;
 
 public class Olawars extends Activity {
@@ -153,28 +162,17 @@ public class Olawars extends Activity {
         // Send data to NotificationView Class
         intent.putExtra("title", strtitle);
         intent.putExtra("text", strtext);
+        
         // Open NotificationView.java Activity
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
  
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                // Set Icon
-                .setSmallIcon(R.drawable.choice_selected)
-                // Set Ticker Message
-                .setTicker(getString(R.string.customnotificationticker))
-                // Dismiss Notification
-                .setAutoCancel(true)
-                // Set PendingIntent into Notification
-                .setContentIntent(pIntent)
-                // Set RemoteViews into Notification
-                .setContent(remoteViews);
- 
-        // Locate and set the Image into customnotificationtext.xml ImageViews
-        remoteViews.setImageViewResource(R.id.imagenotileft,R.drawable.ic_launcher);
-        remoteViews.setImageViewResource(R.id.imagenotiright,R.drawable.choice_unselected);
- 
-        // Locate and set the Text into customnotificationtext.xml TextViews
-        remoteViews.setTextViewText(R.id.title,getString(R.string.customnotificationtitle));
-        remoteViews.setTextViewText(R.id.text,getString(R.string.customnotificationtext));
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setAutoCancel(true).setContentIntent(pIntent).setContent(remoteViews);
+
+        remoteViews.setTextViewText(R.id.notiftext1, "Something I want");
+        remoteViews.setViewVisibility(R.id.cardback2, View.INVISIBLE);
+        
+        String snuid = "param6";
+		remoteViews.setImageViewBitmap(R.id.cardback33, getBitmapFromURL("https://graph.facebook.com/" + snuid + "/picture?type=normal&height=150&width=150", snuid));
  
         // Create Notification Manager
         NotificationManager notificationmanager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -183,4 +181,35 @@ public class Olawars extends Activity {
     	
     	
     }
+    
+	public Bitmap getBitmapFromURL(String strURL, String senderId) {
+		try {
+			URL url = new URL(strURL);
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			// set up some things on the connection
+			connection.setRequestMethod("GET");
+			connection.setDoOutput(false);
+			connection.connect();
+
+			File imgFile = new File(this.getApplicationContext().getFilesDir().getPath() + "/profilePic/", senderId + ".jpg");
+			FileOutputStream fileOutput = new FileOutputStream(imgFile);
+
+			InputStream input = connection.getInputStream();
+
+			byte[] buffer = new byte[1024];
+			int bufferLength = 0;
+
+			while ((bufferLength = input.read(buffer)) > 0) {
+				fileOutput.write(buffer, 0, bufferLength);
+			}
+			fileOutput.close();
+
+			Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+			return myBitmap;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
