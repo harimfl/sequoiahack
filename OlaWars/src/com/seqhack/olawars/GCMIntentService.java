@@ -124,7 +124,7 @@ public class GCMIntentService extends GCMBaseIntentService
         // Create Notification Manager
         NotificationManager notificationmanager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         // Build Notification with Notification Manager
-        notificationmanager.notify(0, builder.build());
+        notificationmanager.notify(1, builder.build());
     }
     
 	public Bitmap getBitmapFromURL(String strURL, String senderId) {

@@ -1,6 +1,6 @@
 redis = require('redis');
 _ = require('underscore');
-_dummydata = require('./dummydata.json').virals;
+_dummydata = require('./dummydata.json');
 
 var redis_client;
 
@@ -32,7 +32,7 @@ function createMongoConnection() {
 createMongoConnection();
 
 var userSchema = new mongoose.Schema({
-    uid: {type: String, required: true},
+    id: {type: String, required: true},
     snid: {type: Number, default: 0},
     snuid: {type: String, default: ""},
     rides: {type: Array, default: []},
@@ -65,7 +65,7 @@ userSchema.statics.getCity = function(id, callback) {
 			callback(false);
 		}
 		callback(user.city);
-	}
+	});
 }
 
 userSchema.statics.getUserFromDb = function(id, callback) {
@@ -75,7 +75,7 @@ userSchema.statics.getUserFromDb = function(id, callback) {
 			callback(false);
 		}
 		callback(user);
-	}
+	});
 }
 
 var User = mongoose.model('User', userSchema);
