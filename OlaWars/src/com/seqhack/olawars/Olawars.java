@@ -129,10 +129,10 @@ public class Olawars extends Activity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_send_pn1:
-            	notify();
+            	notify1();
                 return true;
             case R.id.action_send_pn2:
-            	notify();
+            	notify1();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
