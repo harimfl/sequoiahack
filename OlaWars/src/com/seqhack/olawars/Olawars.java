@@ -154,8 +154,7 @@ public class Olawars extends Activity {
         intent.putExtra("title", strtitle);
         intent.putExtra("text", strtext);
         // Open NotificationView.java Activity
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
  
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 // Set Icon
