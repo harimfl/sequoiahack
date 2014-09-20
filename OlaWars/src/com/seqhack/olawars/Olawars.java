@@ -1,9 +1,20 @@
 package com.seqhack.olawars;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -130,13 +141,53 @@ public class Olawars extends Activity {
         swipelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
 	
         swipelistview.setAdapter(adapter);
-        onJsonResponse("");
+        getDataFromServer();
     }
+    
+    public void getDataFromServer() {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+            	String ssa = "http://ec2-54-169-61-49.ap-southeast-1.compute.amazonaws.com:4000/user/getfriendlb";
+                HttpGet verifyRequest = new HttpGet(ssa);  
+                DefaultHttpClient client = new DefaultHttpClient();
+                try {
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                    nameValuePairs.add(new BasicNameValuePair("pid", "123134"));
+                    
+                    HttpResponse response = client.execute(verifyRequest);
+                    if(response.getStatusLine().getStatusCode() == 200) {
+                        HttpEntity entity = response.getEntity();
+                        if(entity != null){
+                            InputStream inputStream = entity.getContent();
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                            StringBuilder stringBuilder = new StringBuilder();
+
+                            String ligneLue = bufferedReader.readLine();
+                            while(ligneLue != null){
+                                stringBuilder.append(ligneLue + " \n");
+                                ligneLue = bufferedReader.readLine();
+                            }
+                            bufferedReader.close();
+                            final String params = stringBuilder.toString();
+                            _staticInstance.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    onJsonResponse(params);
+                                }
+                            });
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+}
     
     public void onJsonResponse(String json) {
     	JSONParser parser=new JSONParser();
         Object obj = null;
-        json = "{	\"top\" : [			{				\"name\" : \"hari\",				\"rank\" : 1,				\"snuid\" : \"1623842314\",				\"chips\"	: 3444			},			{				\"name\" : \"gitesh\",				\"rank\" : 2,				\"snuid\" : \"1283286538\",				\"chips\"	: 5444			},			{				\"name\" : \"srinaths\",				\"rank\" : 3,				\"snuid\" : \"524740442\",				\"chips\"	: 7444			}		],	\"rest\" : [			{				\"name\" : \"srinath1\",				\"rank\" : 6,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3144			},			{				\"name\" : \"srinath2\",				\"rank\" : 8,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3644			},			{				\"name\" : \"srinath3\",				\"rank\" : 9,				\"snuid\" : \"134593487234987\",				\"chips\"	: 3044			}	]}";
+//        json = "{	\"top\" : [			{				\"name\" : \"hari\",				\"rank\" : 1,				\"snuid\" : \"1623842314\",				\"chips\"	: 3444			},			{				\"name\" : \"gitesh\",				\"rank\" : 2,				\"snuid\" : \"1283286538\",				\"chips\"	: 5444			},			{				\"name\" : \"srinaths\",				\"rank\" : 3,				\"snuid\" : \"524740442\",				\"chips\"	: 7444			}		],	\"rest\" : [			{				\"name\" : \"srinath1\",				\"rank\" : 6,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3144			},			{				\"name\" : \"srinath2\",				\"rank\" : 8,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3644			},			{				\"name\" : \"srinath3\",				\"rank\" : 9,				\"snuid\" : \"134593487234987\",				\"chips\"	: 3044			}	]}";
 		try {
 			obj = parser.parse(json);
 		} catch (ParseException e) {
@@ -174,7 +225,7 @@ public class Olawars extends Activity {
     }
     
     public void addRowToLeaderBoard(String name, String rank, String snuid, String chips) {
-    	itemData.add(new ItemRow(name, rank, snuid, chips, null));
+    	itemData.add(new ItemRow(name, chips, snuid, rank, null));
     }
 	
     public int convertDpToPixel(float dp) {

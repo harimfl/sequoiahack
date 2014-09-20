@@ -11,29 +11,27 @@
             android:tag="back" >
 
             <Button
-                android:id="@+id/swipe_button1"
-                style="@style/MyListButtonAction"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginTop="20dp"
-                android:text="Challenge" />
+             android:id="@+id/swipe_button1"
+             android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+             android:layout_width="90dp"
+             android:layout_height="40dp"
+             android:text="Challenge" />
 
         <Button
             android:id="@+id/swipe_button2"
-            style="@style/MyListButtonAction"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="20dp"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
             android:text="Add" />
 
         <Button
             android:id="@+id/swipe_button3"
-            style="@style/MyListButtonAction"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="20dp"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
             android:text="View" />
 
     </LinearLayout>
