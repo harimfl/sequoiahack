@@ -1,0 +1,9 @@
+{
+    "dependencies": {
+        "express": ">=4.9.4",
+        "express-validator": ">=2.5.0",
+        "body-parser": ">=1.8.3",
+        "express-partials": ">=0.3.0",
+        "underscore": ">=1.7.0"
+    }
+}
