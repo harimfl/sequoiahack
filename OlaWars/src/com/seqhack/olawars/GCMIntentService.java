@@ -66,9 +66,11 @@ public class GCMIntentService extends GCMBaseIntentService
 	    
 	    notification.defaults |= Notification.DEFAULT_SOUND;
 	    
-	    if((Olawars._staticInstance != null)) {
-	    	mManager.notify(1, notification);
-	    }
+	    
+	    mManager.notify(1, notification);
+//	    if((Olawars._staticInstance != null)) {
+//	    	mManager.notify(1, notification);
+//	    }
     }
 
 	@Override
