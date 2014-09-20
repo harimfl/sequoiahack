@@ -3,7 +3,39 @@ var express = require('express')
   , bodyParser = require('body-parser')
   , partials = require('express-partials')
   , _ = require('underscore')
-  , app = express();
+  , app = express()
+  , mongoose = require('mongoose');
+
+db = mongoose.connect('mongodb://localhost/user_data');
+
+var userSchema = new mongoose.Schema({
+    uid: {type: String, required: true},
+    snid: {type: Number, default: 0},
+    snuid: {type: String, default: ""},
+    rides: {type: Array, default: []},
+    meta: {
+        total_miles: {type: Number, default: 0},
+        total_time_spent_ms: {type: Number, default: 0},
+        total_paid: {type: Number, default: 0},
+        max_used_vehicle_type: {type: String, default: "0"},
+        last_used_vehicle_type: {type: String, default: "0"}
+    }
+}, {autoIndex: false});
+
+var User = mongoose.model('User', userSchema);
+
+var ride = new function() {
+    this.vehicle_type = 0;
+    this.start_la = "";
+    this.start_lo = "";
+    this.end_la = "";
+    this.end_lo = "";
+    this.distance = 0;
+    this.start_time = new Date();
+    this.end_time = new Date();
+    this.payment_mode = -1;
+    this.payment = 0;
+};
 
 app.use(partials());
 app.use(bodyParser());
@@ -50,7 +82,7 @@ server = app.listen(80);
 
 console.log("Listening on port %d in %s mode", server.address().port, app.settings.env);
 
-function redis_get(zid, field) {
+function redis_get(uid, field) {
 
 }
 
@@ -72,6 +104,24 @@ function get_last_ride(req, res) {
 
 function get_user_data(req, res) {
     req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
+    res.send(200, {
+        current_city: "Bangalore",
+        current_city_code: 1,
+        last_used_vehicle_type: 3,
+        total_distance_travelled: 49.33
+    });
+}
+
+function add_ride(req, res) {
+    req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
+    var uid = req.params.uid;
+
+    User.findOne({'id': uid}, function(err, user) {
+
+    });
+
+    //get the UID
+
     res.send(200, {
         current_city: "Bangalore",
         current_city_code: 1,
