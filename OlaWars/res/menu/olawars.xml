@@ -8,5 +8,42 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
+    
+    <item
+        android:id="@+id/action_send_pn1"
+        android:orderInCategory="100"
+        android:title="@string/action_send_1"
+        app:showAsAction="never"/>
+        
+    <item
+        android:id="@+id/action_send_pn2"
+        android:orderInCategory="100"
+        android:title="@string/action_send_2"
+        app:showAsAction="never"/>
 
+    
+    <ImageView
+        android:id="@+id/imagenotileft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+ 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/imagenotileft" />
+ 
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:layout_toRightOf="@+id/imagenotileft" />
+ 
+    <ImageView
+        android:id="@+id/imagenotiright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:padding="10dp" />
 </menu>
