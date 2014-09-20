@@ -1,9 +1,19 @@
 package com.seqhack.olawars;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +53,9 @@ public View getView(int position, View convertView, ViewGroup parent) {
             
             holder = new NewsHolder();
            
-            holder.itemName = (TextView)row.findViewById(R.id.example_itemname);
+            holder.itemName = (TextView)row.findViewById(R.id.user_name);
+            holder.olaPoints = (TextView)row.findViewById(R.id.olapoints);
+            holder.playerRank = (TextView)row.findViewById(R.id.playerRank);
             holder.icon=(ImageView)row.findViewById(R.id.example_img);
             holder.button1=(Button)row.findViewById(R.id.swipe_button1);
             holder.button2=(Button)row.findViewById(R.id.swipe_button2);
@@ -56,9 +68,14 @@ public View getView(int position, View convertView, ViewGroup parent) {
         }
         
         ItemRow itemdata = data.get(position);
-        holder.itemName.setText(itemdata.getItemName());
-        holder.icon.setImageDrawable(itemdata.getIcon());
-      
+        if (holder.itemName.getText() != itemdata.getUserName()) {
+        	new DownloadImageTask(holder.icon, itemdata.getSnuid())
+            .execute("https://graph.facebook.com/" + itemdata.getSnuid()
+      				+ "/picture?type=normal&height=150&width=150");
+		}
+        holder.itemName.setText(itemdata.getUserName());
+        holder.olaPoints.setText(itemdata.getOlaPoints());
+        holder.playerRank.setText(itemdata.getPlayerRank());
         holder.button1.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -88,23 +105,53 @@ public View getView(int position, View convertView, ViewGroup parent) {
         
         
         return row;
-	
 }
 
+private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    ImageView bmImage;
+    String file;
+
+    public DownloadImageTask(ImageView bmImage, String file) {
+        this.bmImage = bmImage;
+        this.file = file;
+    }
+
+    protected Bitmap doInBackground(String... urls) {
+        String urldisplay = urls[0];
+        Bitmap mIcon11 = null;
+        try {
+        	File imgFile = new File(Olawars._staticInstance.getApplicationContext()
+					.getFilesDir().getPath() + "/"
+					+ this.file + ".jpg");
+			// add check if file exists else show default icon
+			if (!imgFile.exists()) {
+				InputStream in = new java.net.URL(urldisplay).openStream();
+	            mIcon11 = BitmapFactory.decodeStream(in);
+				} else {
+				mIcon11 = BitmapFactory.decodeFile(imgFile
+						.getAbsolutePath());
+			}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mIcon11;
+    }
+
+    protected void onPostExecute(Bitmap result) {
+    	Log.d("", this.file);
+        bmImage.setImageBitmap(result);
+    }
+}
 
 
 static class NewsHolder{
 	
 	TextView itemName;
+	TextView olaPoints;
+	TextView playerRank;
 	ImageView icon;
 	Button button1;
 	Button button2;
 	Button button3;
-	}
-	
-	
+	}	
 }
-
-
-
-
