@@ -76,6 +76,18 @@ public View getView(int position, View convertView, ViewGroup parent) {
         holder.itemName.setText(itemdata.getUserName());
         holder.olaPoints.setText(itemdata.getOlaPoints());
         holder.playerRank.setText(itemdata.getPlayerRank());
+        if (Integer.parseInt(itemdata.getPlayerRank()) == 1) {
+        	row.findViewById(R.id.front).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_1st));
+        } else if (Integer.parseInt(itemdata.getPlayerRank()) == 2) {
+        	row.findViewById(R.id.front).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_2nd));
+        } else if (Integer.parseInt(itemdata.getPlayerRank()) == 3) {
+        	row.findViewById(R.id.front).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_3rd));
+        } else if (itemdata.getSnuid() == Olawars._staticInstance.regid) {
+        	row.findViewById(R.id.front).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_player_slot));
+        } else {
+        	row.findViewById(R.id.front).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_opponent_slot));
+        }
+        
         holder.button1.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
