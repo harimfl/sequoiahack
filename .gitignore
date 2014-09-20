@@ -1,0 +1,8 @@
+*/.DS_Store
+*/bin
+*/bin/*
+*/obj
+*/obj/*
+*/gen
+*/gen/*
+.DS_Store
