@@ -1,13 +1,25 @@
 package com.seqhack.olawars;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
@@ -15,32 +27,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v4.app.NotificationCompat;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.RemoteViews;
-
 public class Olawars extends Activity {
 
 	SwipeListView swipelistview;
 	ItemAdapter adapter;
 	List<ItemRow> itemData;
+	public static Olawars _staticInstance = null;
 	
 	public static String SENDER_ID = "925617659837"; //TOOD
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -72,7 +64,7 @@ public class Olawars extends Activity {
         swipelistview=(SwipeListView)findViewById(R.id.example_swipe_lv_list); 
         itemData=new ArrayList<ItemRow>();
         adapter=new ItemAdapter(this,R.layout.custom_row,itemData);
-        
+        _staticInstance = this;
      
         
         swipelistview.setSwipeListViewListener(new BaseSwipeListViewListener() {
@@ -138,16 +130,53 @@ public class Olawars extends Activity {
         swipelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
 	
         swipelistview.setAdapter(adapter);
+        onJsonResponse("");
+    }
+    
+    public void onJsonResponse(String json) {
+    	JSONParser parser=new JSONParser();
+        Object obj = null;
+        json = "{	\"top\" : [			{				\"name\" : \"hari\",				\"rank\" : 1,				\"snuid\" : \"1623842314\",				\"chips\"	: 3444			},			{				\"name\" : \"gitesh\",				\"rank\" : 2,				\"snuid\" : \"1283286538\",				\"chips\"	: 5444			},			{				\"name\" : \"srinaths\",				\"rank\" : 3,				\"snuid\" : \"524740442\",				\"chips\"	: 7444			}		],	\"rest\" : [			{				\"name\" : \"srinath1\",				\"rank\" : 6,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3144			},			{				\"name\" : \"srinath2\",				\"rank\" : 8,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3644			},			{				\"name\" : \"srinath3\",				\"rank\" : 9,				\"snuid\" : \"134593487234987\",				\"chips\"	: 3044			}	]}";
+		try {
+			obj = parser.parse(json);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+        JSONObject jsonObject = (JSONObject)obj;
+        JSONArray topPlayers = (JSONArray)jsonObject.get("top");
+        JSONArray restPlayer = (JSONArray)jsonObject.get("rest");
+
         
-        
-        for(int i=0;i<10;i++)
-        {
-        	itemData.add(new ItemRow("Driver "+i,getResources().getDrawable(R.drawable.ola) ));
+        for(int i=0; i<topPlayers.size() ; i++){
+            JSONObject ob = (JSONObject)topPlayers.get(i);
+            
+            String name = ob.get("name").toString();
+            String rank = ob.get("rank").toString();
+            String snuid = ob.get("snuid").toString();
+            String chips = ob.get("chips").toString();
+            addRowToLeaderBoard(name, rank, snuid, chips);
         }
-        
+        for(int i=0; i<restPlayer.size() ; i++){
+        	   JSONObject ob = (JSONObject)restPlayer.get(i);
+               
+               String name = ob.get("name").toString();
+               String rank = ob.get("rank").toString();
+               String snuid = ob.get("snuid").toString();
+               String chips = ob.get("chips").toString();
+               addRowToLeaderBoard(name, rank, snuid, chips);
+               addRowToLeaderBoard(name, rank, snuid, chips);
+               addRowToLeaderBoard(name, rank, snuid, chips);
+               addRowToLeaderBoard(name, rank, snuid, chips);
+        }
         adapter.notifyDataSetChanged();
     }
-
+    
+    public void addRowToLeaderBoard(String name, String rank, String snuid, String chips) {
+    	itemData.add(new ItemRow(name, rank, snuid, chips, null));
+    }
+	
     public int convertDpToPixel(float dp) {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         float px = dp * (metrics.densityDpi / 160f);
@@ -167,81 +196,15 @@ public class Olawars extends Activity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_send_pn1:
-            	notify1();
+            	//notify1();
                 return true;
             case R.id.action_send_pn2:
-            	notify1();
+            	//notify1();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-    
-    public void notify1() {
-    	// Using RemoteViews to bind custom layouts into Notification
-        RemoteViews remoteViews = new RemoteViews(getPackageName(),R.layout.notification_layout);
- 
-        // Set Notification Title
-        String strtitle = getString(R.string.customnotificationtitle);
-        // Set Notification Text
-        String strtext = getString(R.string.customnotificationtext);
- 
-        // Open NotificationView Class on Notification Click
-        Intent intent = new Intent(this, NotificationView.class);
-        // Send data to NotificationView Class
-        intent.putExtra("title", strtitle);
-        intent.putExtra("text", strtext);
-        
-        // Open NotificationView.java Activity
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
- 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setAutoCancel(true).setContentIntent(pIntent).setContent(remoteViews);
-
-        remoteViews.setTextViewText(R.id.notiftext1, "Something I want");
-        remoteViews.setViewVisibility(R.id.cardback2, View.INVISIBLE);
-        
-        String snuid = "param6";
-		remoteViews.setImageViewBitmap(R.id.cardback33, getBitmapFromURL("https://graph.facebook.com/" + snuid + "/picture?type=normal&height=150&width=150", snuid));
- 
-        // Create Notification Manager
-        NotificationManager notificationmanager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // Build Notification with Notification Manager
-        notificationmanager.notify(0, builder.build());
-    	
-    	
-    }
-    
-	public Bitmap getBitmapFromURL(String strURL, String senderId) {
-		try {
-			URL url = new URL(strURL);
-			HttpURLConnection connection = (HttpURLConnection) url
-					.openConnection();
-			// set up some things on the connection
-			connection.setRequestMethod("GET");
-			connection.setDoOutput(false);
-			connection.connect();
-
-			File imgFile = new File(this.getApplicationContext().getFilesDir().getPath() + "/profilePic/", senderId + ".jpg");
-			FileOutputStream fileOutput = new FileOutputStream(imgFile);
-
-			InputStream input = connection.getInputStream();
-
-			byte[] buffer = new byte[1024];
-			int bufferLength = 0;
-
-			while ((bufferLength = input.read(buffer)) > 0) {
-				fileOutput.write(buffer, 0, bufferLength);
-			}
-			fileOutput.close();
-
-			Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-			return myBitmap;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
 	
 	/**
      * Check the device to make sure it has the Google Play Services APK. If
@@ -367,4 +330,12 @@ public class Olawars extends Activity {
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
     }
+    
+//    @Override
+//    public void onPause() {
+//    	if (mWakeLock.isHeld())
+//    	    mWakeLock.release();
+//        super.onPause();
+//    }
+//    
 }

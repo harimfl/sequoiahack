@@ -5,30 +5,35 @@
 
         <LinearLayout
             android:id="@+id/back"
-            android:tag="back"
             style="@style/MyListBackContent"
-            >
+            android:layout_width="fill_parent"
+         android:layout_height="60dp"
+            android:tag="back" >
 
             <Button
                 android:id="@+id/swipe_button1"
                 style="@style/MyListButtonAction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="12dp"
+                android:layout_marginTop="20dp"
                 android:text="Challenge" />
 
         <Button
             android:id="@+id/swipe_button2"
             style="@style/MyListButtonAction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="20dp"
             android:text="Add" />
 
         <Button
             android:id="@+id/swipe_button3"
             style="@style/MyListButtonAction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
             android:text="View" />
 
     </LinearLayout>
@@ -36,26 +41,51 @@
      <RelativeLayout
          android:id="@+id/front"
          style="@style/MyListFrontContent"
-         android:layout_width="match_parent"
-         android:layout_height="match_parent"
+         android:layout_width="wrap_content"
+         android:layout_height="80dp"
          android:orientation="vertical"
+         android:background="@drawable/olawars_opponent_slot"
          android:tag="front" >
 
+
          <TextView
-             android:id="@+id/example_itemname"
+             android:id="@+id/user_name"
              style="@style/MyListTitle"
-             android:layout_marginLeft="80dp"
              android:layout_width="fill_parent"
-             android:layout_height="wrap_content" />
+             android:layout_height="wrap_content"
+             android:layout_marginLeft="80dp" />
 
          <ImageView
              android:id="@+id/example_img"
+             android:layout_width="56dp"
+             android:layout_height="56dp"
+             android:layout_marginLeft="6dp"
+             android:layout_marginTop="6dp"
+             android:src="@drawable/ola" />
+
+         <ImageView
+             android:id="@+id/imageView1"
              android:layout_width="60dp"
              android:layout_height="60dp"
-             android:layout_alignParentLeft="true"
-             android:layout_alignTop="@+id/example_itemname"
-             android:layout_marginLeft="16dp"
-             android:src="@drawable/ola" />
+             android:layout_marginLeft="4dp"
+             android:layout_marginTop="4dp"
+             android:src="@drawable/olawars_profile_frame" />
+
+         <TextView
+             android:id="@+id/olapoints"
+             style="@style/MyListTitle"
+             android:layout_width="200px"
+             android:layout_height="wrap_content"
+             android:layout_alignBottom="@+id/example_img"
+             android:layout_toLeftOf="@+id/playerRank" />
+
+         <TextView
+             android:id="@+id/playerRank"
+             style="@style/MyListTitle"
+             android:layout_width="100px"
+             android:layout_height="wrap_content"
+             android:layout_alignRight="@+id/user_name"
+             android:layout_below="@+id/user_name" />
 
      </RelativeLayout>
 
