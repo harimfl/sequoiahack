@@ -37,7 +37,7 @@ var userSchema = new mongoose.Schema({
     snuid: {type: String, default: ""},
     rides: {type: Array, default: []},
     sn_friend_list: {type: Array, default: []},  //format pid_snuid_name
-    city: {type: String, default: ""},
+    city: {type: String, default: "bangalore"},
     meta: {
         total_miles: {type: Number, default: 0},
         total_time_spent_ms: {type: Number, default: 0},
@@ -175,51 +175,63 @@ function getlocallb(req, res) {
     var pid = req.params.pid;
     User.getCity(pid, function(city) {
     	if(city && city != "") {
-    		
+    		getLeaderboardWinners("leaderboard:" + city, function(result){
+    			console.log("Gitesh result", result);
+    		});
     	}
     });
     User.updateScore(pid, score);
 }
 
+
 function getfriendlb(req, res) {
-	// req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
-	// req.assert('pid', 'User Id invalid').notEmpty();
- //    var pid = req.params.pid;
- //    User.getUserFromDb(pid, function(user) {
- //    	if(user) {
- //    		getFriendsChips(user.sn_friend_list, function(list) {
- //    			var sortable = [];
- //    			for (var i =0; i<list.length;i++) {
-	// 			   	sortable.push([list['id'], list['olamiles'], list['snuid'], list['name']]);
-	// 			}
-	// 			sortable.sort(function(a, b) {return b[1] - a[1]});	
+	//res.send(JSON.stringify(_dummydata));return;
+	req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
+	req.assert('pid', 'User Id invalid').notEmpty();
+    var pid = req.params.pid;
+    User.getUserFromDb(pid, function(user) {
+    	if(user) {
+    		getFriendsChips(user.sn_friend_list, function(list) {
+    			var sortable = [];
+    			for (var i =0; i<list.length;i++) {
+				   	sortable.push([list['id'], list['olamiles'], list['snuid'], list['name']]);
+				}
+				sortable.sort(function(a, b) {return b[1] - a[1]});	
 
-	// 			var retObj = {};
+				var retObj = {};
 
-	// 			retObj['top'] = [];
+				retObj['top'] = [];
 
-	// 			for (var i =0; i<3;i++) {
-	// 				var temp = {};
-	// 				temp['name'] = sortable[i][3];
-	// 				temp['snuid'] = sortable[i][2];
-	// 				temp['olamiles'] = sortable[i][1];
-	// 				temp['rank'] = i+1;
-	// 				retObj['top'].push(temp);
-	// 			}
+				for (var i =0; i<3;i++) {
+					var temp = {};
+					temp['name'] = sortable[i][3];
+					temp['snuid'] = sortable[i][2];
+					temp['olamiles'] = sortable[i][1];
+					temp['rank'] = i+1;
+					retObj['top'].push(temp);
+				}
+				var user_rank;
+				for (var i =0; i<list.length;i++) {
+					if(user.snuid == sortable[i][2]);
+					user_rank = i+1;
+				}
 
-	// 			for (var i =0; i<list.length;i++) {
-	// 				temp['name'] = sortable[i][3];
-	// 				temp['snuid'] = sortable[i][2];
-	// 				temp['olamiles'] = sortable[i][1];
-	// 				temp['rank'] = i+1;
-	// 				retObj['top'].push();
-	// 			}
+				var min = user_rank > 14 ? user_rank:14;
+				var max = list.length > min + 10 ? min + 10:list.length;
 
+				retObj['regular'] = [];
+				for(var i = min - 10; i< max;) {
+					var temp = {};
+					temp['name'] = sortable[i][3];
+					temp['snuid'] = sortable[i][2];
+					temp['olamiles'] = sortable[i][1];
+					temp['rank'] = i+1;
+					retObj['regular'].push(temp);
+				}
 
- //   			});
- //    	}
- //    });
-    res.send(JSON.stringify(_dummydata));
+   			});
+    	}
+    });
 }
 
 getLeaderboardWinners = function(leaderboard, callback) {
