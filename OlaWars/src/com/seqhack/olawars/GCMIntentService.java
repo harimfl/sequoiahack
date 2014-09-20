@@ -7,17 +7,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.view.View;
@@ -27,55 +22,16 @@ import com.google.android.gcm.GCMBaseIntentService;
 
 public class GCMIntentService extends GCMBaseIntentService
 { 
-	private NotificationManager mManager;
     public static final String TAG = GCMIntentService.class.getName();
     
     public GCMIntentService() {
-        super("925617659837");
+        super(Olawars.SENDER_ID);
     }
 
     @Override
     protected void onMessage(Context context, Intent intent) {
     	Bundle b=intent.getExtras();
-    	int type = Integer.parseInt(b.getString("type"));
-    	String param = b.getString("param");
-
-    	notify1(context);
-    	/*
-    	mManager = (NotificationManager) this.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-    	Intent intent1 = new Intent(this.getApplicationContext(), Olawars.class);
-    	
-    	JSONObject paramList = new JSONObject();
-    	try {
-            paramList.put("notifType", "push");
-            paramList.put("title", title);
-    		paramList.put("text", text);
-    		paramList.put("param1", param1);
-    		paramList.put("param2", param2);
-    		paramList.put("param3", param3);
-    		paramList.put("type", type);
-    	} catch (JSONException e) {
-    	    // TODO Auto-generated catch block
-    	    e.printStackTrace();
-    	}
-    	intent1.setData((Uri.parse(paramList.toString())));
-
-    	Notification notification = new Notification(R.drawable.icon, action, System.currentTimeMillis());
-    	intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-	    PendingIntent pendingNotificationIntent = PendingIntent.getActivity(
-	    		this.getApplicationContext(), 5, intent1,
-	    PendingIntent.FLAG_UPDATE_CURRENT);
-	
-	    notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-	    notification.setLatestEventInfo(this.getApplicationContext(), title, text, pendingNotificationIntent);
-	    
-	    notification.defaults |= Notification.DEFAULT_SOUND;
-	    
-	    
-	    mManager.notify(1, notification);
-	    */
+    	notify(b, context);
     }
 
 	@Override
@@ -94,32 +50,73 @@ public class GCMIntentService extends GCMBaseIntentService
 		// TODO Auto-generated method stub
 	}
 	
-    public void notify1(Context context) {
+    public void notify(Bundle b, Context context) {    	
+    	int type = Integer.parseInt(b.getString("type"));
+
     	// Using RemoteViews to bind custom layouts into Notification
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_layout);
- 
-        // Set Notification Title
-        String strtitle = getString(R.string.customnotificationtitle);
-        // Set Notification Text
-        String strtext = getString(R.string.customnotificationtext);
- 
-        // Open NotificationView Class on Notification Click
-        Intent intent = new Intent(GCMIntentService.this, NotificationView.class);
-        // Send data to NotificationView Class
-        intent.putExtra("title", strtitle);
-        intent.putExtra("text", strtext);
         
         // Open NotificationView.java Activity
-        //PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent pIntent = PendingIntent.getBroadcast(GCMIntentService.this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
- 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setAutoCancel(true).setContentIntent(pIntent).setContent(remoteViews);
-
-        remoteViews.setTextViewText(R.id.notiftext1, "Something I want");
-        remoteViews.setViewVisibility(R.id.cardback2, View.INVISIBLE);
+        PendingIntent pIntent = PendingIntent.getBroadcast(GCMIntentService.this, 1, new Intent(GCMIntentService.this, NotificationView.class), PendingIntent.FLAG_CANCEL_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.icon).setAutoCancel(true).setContentIntent(pIntent).setContent(remoteViews);
         
-        //String snuid = "param6";
-		//remoteViews.setImageViewBitmap(R.id.cardback33, getBitmapFromURL("https://graph.facebook.com/" + snuid + "/picture?type=normal&height=150&width=150", snuid));
+        String other_name, traveller_snuid, other_snuid, traveller_name, num_people;
+        
+        switch(type) {
+        case 1:
+        	other_name = b.getString("other_name");
+        	traveller_snuid = b.getString("traveller_snuid");
+        	other_snuid = b.getString("other_snuid");
+        	remoteViews.setViewVisibility(R.id.cardback1, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback2, View.INVISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback3, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback33, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback4, View.INVISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback5, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback55, View.VISIBLE);
+        	remoteViews.setTextViewText(R.id.notiftext1, "You Ran Over " + other_name);
+        	remoteViews.setImageViewBitmap(R.id.cardback33, getBitmapFromURL("https://graph.facebook.com/" + traveller_snuid + "/picture?type=normal&height=150&width=150", traveller_snuid));
+        	remoteViews.setImageViewBitmap(R.id.cardback55, getBitmapFromURL("https://graph.facebook.com/" + other_snuid + "/picture?type=normal&height=150&width=150", other_snuid));
+        	break;
+        case 2:
+        	traveller_name = b.getString("traveller_name");
+        	traveller_snuid = b.getString("traveller_snuid");
+        	other_snuid = b.getString("other_snuid");
+        	remoteViews.setViewVisibility(R.id.cardback1, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback2, View.INVISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback3, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback33, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback4, View.INVISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback5, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback55, View.VISIBLE);
+        	remoteViews.setTextViewText(R.id.notiftext1, traveller_name + " Ran you over");
+        	remoteViews.setImageViewBitmap(R.id.cardback33, getBitmapFromURL("https://graph.facebook.com/" + traveller_snuid + "/picture?type=normal&height=150&width=150", traveller_snuid));
+        	remoteViews.setImageViewBitmap(R.id.cardback55, getBitmapFromURL("https://graph.facebook.com/" + other_snuid + "/picture?type=normal&height=150&width=150", other_snuid));
+        	break;
+        case 3:
+        	num_people = b.getString("num_people");
+        	remoteViews.setViewVisibility(R.id.cardback1, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback2, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback3, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback33, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback4, View.INVISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback5, View.INVISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback55, View.INVISIBLE);
+        	remoteViews.setTextViewText(R.id.notiftext1, "You Ran Over " + num_people + " People");
+        	break;
+        case 4:
+        	num_people = b.getString("num_people");
+        	remoteViews.setViewVisibility(R.id.cardback1, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback2, View.INVISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback3, View.INVISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback33, View.INVISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback4, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback5, View.VISIBLE);
+        	remoteViews.setViewVisibility(R.id.cardback55, View.VISIBLE);
+        	remoteViews.setTextViewText(R.id.notiftext1, num_people + " People Ran you over");
+        	break;
+        	
+        }
  
         // Create Notification Manager
         NotificationManager notificationmanager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
