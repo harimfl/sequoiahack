@@ -29,7 +29,7 @@ var msg = new gcm.Message();
 //                                             "1", text, "12", 1283286538, ['13','26','39'], 1, 0);
 // Statics.sendPushNotif = function(type, pid, param1, param2, param3, text, senderId, senderSnuid, cards, snid, usertimer) {
 
-	gcmsender.send(msg, duid, 2, function (err, result) {
+	gcmsender.send(msg, [duid], 2, function (err, result) {
               if(err) {
 			//TODO: Sample this?
 			console.log("Gitesh sent pn fail", err);

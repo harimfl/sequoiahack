@@ -42,8 +42,8 @@
 		         {
 		         	"rank":13,
 		            "olamiles":55890,
-		            "name":"Astha",
-		            "snuid":"1023625423",
+		            "name":"Arjun",
+		            "snuid":"10037642",
 		            "type":"chips"
 		         }
 		      ],
@@ -51,40 +51,56 @@
 		         {
 		         	"rank":14,
 		            "olamiles":55000,
-		            "name":"Astha",
-		            "snuid":"1023625423",
+		            "name":"Manish",
+		            "snuid":"641725139",
 		            "type":"chips"
 		         }
 		      ],		      [
 		         {
 		         	"rank":15,
 		            "olamiles":45087,
-		            "name":"Astha",
-		            "snuid":"1023625423",
+		            "name":"Sanchit",
+		            "snuid":"1533535238",
 		            "type":"chips"
 		         }
 		      ],		      [
 		         {
 		         	"rank":16,
 		            "olamiles":41087,
-		            "name":"Astha",
-		            "snuid":"1023625423",
+		            "name":"Priya",
+		            "snuid":"555445198",
 		            "type":"chips"
 		         }
 		      ],		      [
 		         {
 		         	"rank":17,
 		            "olamiles":30876,
-		            "name":"Astha",
-		            "snuid":"1023625423",
+		            "name":"Saloni",
+		            "snuid":"100000935989152",
 		            "type":"chips"
 		         }
 		      ],		      [
 		         {
 		         	"rank":18,
 		            "olamiles":19776,
-		            "name":"Astha",
-		            "snuid":"1023625423",
+		            "name":"Rohit",
+		            "snuid":"1501753385",
+		            "type":"chips"
+		         }
+		      ],   [
+		         {
+		         	"rank":19,
+		            "olamiles":12000,
+		            "name":"Amar",
+		            "snuid":"716008541",
+		            "type":"chips"
+		         }
+		      ] ,   [
+		         {
+		         	"rank":20,
+		            "olamiles":11502,
+		            "name":"Keerthi",
+		            "snuid":"100001796716540",
 		            "type":"chips"
 		         }
 		      ]
