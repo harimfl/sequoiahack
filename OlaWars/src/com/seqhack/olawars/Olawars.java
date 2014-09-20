@@ -83,11 +83,12 @@ public class Olawars extends Activity {
         //These are the swipe listview settings. you can change these
         //setting as your requirement 
         swipelistview.setSwipeMode(SwipeListView.SWIPE_MODE_BOTH); // there are five swiping modes
-        swipelistview.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_DISMISS); //there are four swipe actions 
+        swipelistview.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_NONE); //there are four swipe actions 
         swipelistview.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
-        swipelistview.setOffsetLeft(convertDpToPixel(0f)); // left side offset
-        swipelistview.setOffsetRight(convertDpToPixel(80f)); // right side offset
-        swipelistview.setAnimationTime(500); // Animation time
+        swipelistview.setOffsetLeft(convertDpToPixel(40f)); // left side offset
+        swipelistview.setOffsetRight(convertDpToPixel(40f)); // right side offset
+        swipelistview.setAnimationTime(400); // Animation time
+        swipelistview.setSwipeCloseAllItemsWhenMoveList(true);
         swipelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
 	
         swipelistview.setAdapter(adapter);
@@ -96,7 +97,6 @@ public class Olawars extends Activity {
         for(int i=0;i<10;i++)
         {
         	itemData.add(new ItemRow("Driver "+i,getResources().getDrawable(R.drawable.ola) ));
-        	
         }
         
         adapter.notifyDataSetChanged();
