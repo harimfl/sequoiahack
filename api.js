@@ -2,6 +2,7 @@ var express = require('express')
   , expressValidator = require('express-validator')
   , bodyParser = require('body-parser')
   , partials = require('express-partials')
+  , _ = require('underscore')
   , app = express();
 
 app.use(partials());
@@ -22,7 +23,6 @@ app.use(expressValidator({
         };
     }
 }));
-app.use(methodOverride());
 app.enable("jsonp callback");
 
 app.param(function(name, fn){
@@ -46,7 +46,7 @@ app.use( function(err, req, res, next) {
     res.status(500);
     res.render('500.ejs', { locals: { error: err }, status: 500 });
 });
-server = app.listen(port);
+server = app.listen(80);
 
 console.log("Listening on port %d in %s mode", server.address().port, app.settings.env);
 
