@@ -13,7 +13,7 @@
             <Button
              android:id="@+id/swipe_button1"
              android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="2dp"
              android:layout_width="90dp"
              android:layout_height="40dp"
              android:text="Challenge" />
@@ -23,14 +23,14 @@
             android:layout_width="90dp"
             android:layout_height="40dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="2dp"
             android:text="Add" />
 
         <Button
             android:id="@+id/swipe_button3"
             android:layout_width="80dp"
             android:layout_height="40dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="2dp"
             android:layout_marginLeft="10dp"
             android:text="View" />
 
@@ -51,6 +51,7 @@
              android:layout_height="wrap_content"
              android:layout_marginLeft="80dp"
              android:gravity="center"
+             android:textColor="#175600"
              android:textSize="25sp" />
 
          <ImageView
@@ -78,7 +79,8 @@
              android:layout_width="200px"
              android:layout_height="wrap_content"
              android:layout_alignBottom="@+id/imageView1"
-             android:layout_alignLeft="@+id/user_name" />
+             android:layout_alignLeft="@+id/user_name"
+             android:textColor="#175600" />
 
          <TextView
              android:id="@+id/playerRank"
@@ -88,8 +90,17 @@
              android:layout_alignBaseline="@+id/olapoints"
              android:layout_alignBottom="@+id/olapoints"
              android:layout_alignRight="@+id/user_name"
-             android:gravity="center" />
+             android:gravity="center"
+             android:textColor="#175600" />
+     </RelativeLayout>
 
+     <RelativeLayout
+         android:id="@+id/imageView3"
+         android:layout_width="fill_parent"
+         android:layout_height="3dp"
+         android:background="@drawable/olawars_divider"
+         android:layout_marginTop="50dp"
+         android:tag="imageView2" >
      </RelativeLayout>
 
 </FrameLayout>
