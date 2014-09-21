@@ -23,14 +23,6 @@
         swipe:swipeMode="both" >
     </com.fortysevendeg.swipelistview.SwipeListView>
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:src="@drawable/olawars_leaderboard_footer" />
-
     <Button
         android:id="@+id/button_login"
         android:layout_width="150dp"
@@ -47,29 +39,41 @@
         android:layout_below="@+id/button_login"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:id="@+id/friendsBoard"
-        style="@style/MyListTitle"
+    <RelativeLayout
+        android:id="@+id/imageView2"
+        style="@style/MyListFrontContent"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="26dp"
-        android:gravity="center"
-        android:text="Friends"
-        android:textSize="25sp" />
-
-    <TextView
-        android:id="@+id/localBoard"
-        style="@style/MyListTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/imageView2"
-        android:layout_marginLeft="40dp"
-        android:gravity="center"
-        android:text="Local"
-        android:textSize="25sp" />
+        android:background="@drawable/olawars_leaderboard_footer"
+        android:orientation="vertical"
+        android:tag="imageView2" >
+
+        <TextView
+            android:id="@+id/friendsBoard"
+            style="@style/MyListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="33dp"
+            android:gravity="center"
+            android:text="Friends"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/localBoard"
+            style="@style/MyListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="51dp"
+            android:gravity="center"
+            android:text="Local"
+            android:textSize="25sp" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

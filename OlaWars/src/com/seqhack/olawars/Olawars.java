@@ -102,7 +102,7 @@ public class Olawars extends Activity {
         mSimpleFacebook = SimpleFacebook.getInstance(this);
         setLogin();
 
-        if (false && mSimpleFacebook.isLogin()) {
+        if (true || mSimpleFacebook.isLogin()) {
             loggedInUIState();
         }
         else {
