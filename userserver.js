@@ -30,6 +30,7 @@ function createMongoConnection() {
 	db = mongoose.connect('mongodb://'+'127.0.0.1:27017'+'/'+'olawars');
 }
 createMongoConnection();
+createRedisConnection();
 
 var userSchema = new mongoose.Schema({
     id: {type: String, required: true},
@@ -93,11 +94,15 @@ userSchema.statics.getUserFromSnuid = function(snuid, callback) {
 var User = mongoose.model('User', userSchema);
 
 function updateGlobalLeaderBoard(pid, miles) {
-	redis_client.zadd('leaderboard:global', miles, pid);
+	redis_client.zadd('leaderboard:global', miles, pid,function (err, response) {
+    if (err) throw err;
+});
 };
 
 function updateLeaderBoard(leaderboard ,pid, miles) {
-	redis_client.zadd(leaderboard, miles, pid);
+	redis_client.zadd(leaderboard, miles, pid, function (err, response) {
+    if (err) throw err;
+});
 };
 
 
