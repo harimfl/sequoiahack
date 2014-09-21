@@ -3,28 +3,25 @@
       
          {
          	"rank":1,
-            "olamiles":210010,
+            "chips":210010,
             "name":"Amit",
-            "snuid":"100000500888579",
-            "type":"chips"
+            "snuid":"100000500888579"
          }
       ,
       
          {
          	"rank":2,
-            "olamiles":156007,
+            "chips":156007,
             "name":"Rajat",
-            "snuid":"524429901",
-            "type":"chips"
+            "snuid":"524429901"
          }
       ,
       
          {
          	"rank":3,
-            "olamiles":109088,
+            "chips":109088,
             "name":"Nayan",
-            "snuid":"1023625423",
-            "type":"chips"
+            "snuid":"1023625423"
          }
       
    ],
@@ -32,76 +29,67 @@
    		      
 		         {
 		         	"rank":12,
-		            "olamiles":70000,
+		            "chips":70000,
 		            "name":"Astha",
-		            "snuid":"1023625423",
-		            "type":"chips"
+		            "snuid":"1023625423"
 		         }
 		      ,
 		      
 		         {
 		         	"rank":13,
-		            "olamiles":55890,
+		            "chips":55890,
 		            "name":"Arjun",
-		            "snuid":"10037642",
-		            "type":"chips"
+		            "snuid":"10037642"
 		         }
 		      ,
 		      		      
 		         {
 		         	"rank":14,
-		            "olamiles":55000,
+		            "chips":55000,
 		            "name":"Manish",
-		            "snuid":"641725139",
-		            "type":"chips"
+		            "snuid":"641725139"
 		         }
 		      ,		      
 		         {
 		         	"rank":15,
-		            "olamiles":45087,
+		            "chips":45087,
 		            "name":"Sanchit",
-		            "snuid":"1533535238",
-		            "type":"chips"
+		            "snuid":"1533535238"
 		         }
 		      ,		      
 		         {
 		         	"rank":16,
-		            "olamiles":41087,
+		            "chips":41087,
 		            "name":"Priya",
-		            "snuid":"555445198",
-		            "type":"chips"
+		            "snuid":"555445198"
 		         }
 		      ,		      
 		         {
 		         	"rank":17,
-		            "olamiles":30876,
+		            "chips":30876,
 		            "name":"Saloni",
-		            "snuid":"100000935989152",
-		            "type":"chips"
+		            "snuid":"100000935989152"
 		         }
 		      ,		      
 		         {
 		         	"rank":18,
-		            "olamiles":19776,
+		            "chips":19776,
 		            "name":"Rohit",
-		            "snuid":"1501753385",
-		            "type":"chips"
+		            "snuid":"1501753385"
 		         }
 		      ,   
 		         {
 		         	"rank":19,
-		            "olamiles":12000,
+		            "chips":12000,
 		            "name":"Amar",
-		            "snuid":"716008541",
-		            "type":"chips"
+		            "snuid":"716008541"
 		         }
 		       ,   
 		         {
 		         	"rank":20,
-		            "olamiles":11502,
+		            "chips":11502,
 		            "name":"Keerthi",
-		            "snuid":"100001796716540",
-		            "type":"chips"
+		            "snuid":"100001796716540"
 		         }
 		      
    ]

@@ -245,10 +245,22 @@ function updateScore(req, res) {
 	req.assert('pid', 'User Id invalid').notEmpty();
     var pid = req.params.pid;
     User.updateScore(pid, score);
-    updateGlobalLeaderBoard(pid, score);
     User.getCity(pid, function(city) {
     	if(city && city != "") {
+    		getFBRank(pid, 
+    			function(rank1) {
+    				updateLeaderBoard("leaderboard:" + city ,pid, score);
+					updateGlobalLeaderBoard(pid, score);
+		    		getFBRank(pid, 
+			    		function(rank2) {
+			    			getFBFriendsBetweenRank(pid, rank1, rank2, function(snuids){
+			    				//use snuids here
+			    			});
+			    		}
+		    		);
+		    });
     		updateLeaderBoard("leaderboard:" + city ,pid, score);
+    		updateGlobalLeaderBoard(pid, score);
     	}
     });
     res.send(200);
@@ -352,6 +364,44 @@ function getfriendlb(req, res) {
     });
 }
 
+getFBRank = function(pid, cb){
+	User.getUserFromDb(pid, function(user) {
+    	if(user) {
+    		getFriendsChips(user.sn_friend_list, function(list) {
+    			var sortable = [];
+    			for (var i =0; i<list.length;i++) {
+				   	sortable.push([list['id'], list['olamiles']]);
+				}
+				sortable.sort(function(a, b) {return b[1] - a[1]});	
+				for (var i =0; i<list.length;i++) {
+					if(user.snuid == sortable[i][2]);
+					user_rank = i+1;
+				}
+				cb(user_rank);
+   			});
+    	}
+    });
+}
+
+getFBFriendsBetweenRank = function(pid, min, max, cb) {
+	User.getUserFromDb(pid, function(user) {
+    	if(user) {
+    		getFriendsChips(user.sn_friend_list, function(list) {
+    			var sortable = [];
+    			for (var i =0; i<list.length;i++) {
+				   	sortable.push([list['id'], list['olamiles'], list['snuid']]);
+				}
+				sortable.sort(function(a, b) {return b[1] - a[1]});	
+				var friends = [];
+				for (var i =min; i<max + 1;i++) {
+					friends.push(sortable[i][2]);
+				}
+				cb(friends);
+   			});
+    	}
+    });
+}
+
 getzrevrange = function(leaderboard, min, max, callback) {
     var chain = redis_client.multi();
     
@@ -367,7 +417,6 @@ getzrevrange = function(leaderboard, min, max, callback) {
 }
 
 getRank = function(pid) {
-
 	redis_client.zrevrank(pid, function(err, reply) {
 		if (!err && reply) {
 			return callback(reply);
