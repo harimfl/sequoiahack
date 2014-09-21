@@ -247,6 +247,7 @@ public class Olawars extends Activity {
                 try {
                     List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
                     nameValuePairs.add(new BasicNameValuePair("pid", "123134"));
+                    nameValuePairs.add(new BasicNameValuePair("access_token", mSimpleFacebook.getSession().getAccessToken()));
                     
                     HttpResponse response = client.execute(verifyRequest);
                     if(response.getStatusLine().getStatusCode() == 200) {
