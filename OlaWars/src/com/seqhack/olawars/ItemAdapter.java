@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Random;
 
 import android.app.Activity;
 import android.content.Context;
@@ -58,6 +59,7 @@ public View getView(int position, View convertView, ViewGroup parent) {
             holder.olaPoints = (TextView)row.findViewById(R.id.olapoints);
             holder.playerRank = (TextView)row.findViewById(R.id.playerRank);
             holder.icon=(ImageView)row.findViewById(R.id.example_img);
+            holder.car=(ImageView)row.findViewById(R.id.imageView3);
             holder.button1=(Button)row.findViewById(R.id.swipe_button1);
             holder.button2=(Button)row.findViewById(R.id.swipe_button2);
             holder.button3=(Button)row.findViewById(R.id.swipe_button3);
@@ -108,7 +110,15 @@ public View getView(int position, View convertView, ViewGroup parent) {
         	holder.itemName.setTextColor(Color.parseColor("#175600"));
         	holder.olaPoints.setTextColor(Color.parseColor("#175600"));
         }
-        
+        Random rand = new Random();
+        int randomNum = rand.nextInt((3) + 1);
+        if (randomNum == 1) {
+        	holder.car.setImageDrawable(Olawars._staticInstance.getResources().getDrawable(R.drawable.mini_car));
+        } else if (randomNum == 2) {
+        	holder.car.setImageDrawable(Olawars._staticInstance.getResources().getDrawable(R.drawable.sedan_car));
+        } else {
+        	holder.car.setImageDrawable(Olawars._staticInstance.getResources().getDrawable(R.drawable.prime_car));
+        }
         holder.button1.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -182,6 +192,7 @@ static class NewsHolder{
 	TextView itemName;
 	TextView olaPoints;
 	TextView playerRank;
+	ImageView car;
 	ImageView icon;
 	Button button1;
 	Button button2;

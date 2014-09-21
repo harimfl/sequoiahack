@@ -34,7 +34,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -66,7 +65,6 @@ public class Olawars extends Activity {
     String regid = "";
 	
     private Button mButtonLogin;
-    private TextView mTextStatus;
     
     private Session.StatusCallback callback;
     private UiLifecycleHelper uiHelper;
@@ -106,22 +104,6 @@ public class Olawars extends Activity {
         swipelistview=(SwipeListView)findViewById(R.id.example_swipe_lv_list); 
 
         mButtonLogin = (Button) findViewById(R.id.button_login);
-        mTextStatus = (TextView) findViewById(R.id.text_status);        
-        
-        mButtonLogin.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Session session = Session.getActiveSession();
-			    if (!session.isOpened() && !session.isClosed()) {
-			        session.openForRead(new Session.OpenRequest(_staticInstance)
-			            .setPermissions(/*Arrays.asList("public_profile")*/)
-			            .setCallback(callback));
-			    } else {
-			        Session.openActiveSession(_staticInstance, true, callback);
-			    }
-			}
-		});
         
         if(Session.getActiveSession().isOpened()) {
         	loggedInUIState();
@@ -312,9 +294,6 @@ public class Olawars extends Activity {
                String snuid = ob.get("snuid").toString();
                String chips = ob.get("chips").toString();
                addRowToLeaderBoard(name, rank, snuid, chips);
-               addRowToLeaderBoard(name, rank, snuid, chips);
-               addRowToLeaderBoard(name, rank, snuid, chips);
-               addRowToLeaderBoard(name, rank, snuid, chips);
         }
         adapter.notifyDataSetChanged();
     }
@@ -480,8 +459,7 @@ public class Olawars extends Activity {
     private void loggedInUIState() {
         mButtonLogin.setEnabled(false);
         mButtonLogin.setVisibility(View.GONE);
-//        swipelistview.setVisibility(View.VISIBLE);
-        mTextStatus.setText("");
+        swipelistview.setVisibility(View.VISIBLE);
         
         final Session session = Session.getActiveSession();
         if (session != null && session.isOpened()) {
@@ -509,10 +487,20 @@ public class Olawars extends Activity {
 //        swipelistview.setVisibility(View.GONE);
 //        mTextStatus.setText("");
     }
+
+    public void loginClickHandler(View v) {
+    	Session session = Session.getActiveSession();
+	    if (!session.isOpened() && !session.isClosed()) {
+	        session.openForRead(new Session.OpenRequest(_staticInstance)
+	            .setPermissions(/*Arrays.asList("public_profile")*/)
+	            .setCallback(callback));
+	    } else {
+	        Session.openActiveSession(_staticInstance, true, callback);
+	    }
+    }
     
     public void friendListClickHandler(View v) {
         Log.d("tag","local");
-        View x = v.getRootView();
         View butt = Olawars._staticInstance.findViewById(R.id.imageView6);
         butt.setVisibility(View.VISIBLE);
         butt = (View) v.getRootView().findViewById(R.id.imageView5);

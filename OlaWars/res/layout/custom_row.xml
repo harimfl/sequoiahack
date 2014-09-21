@@ -56,51 +56,59 @@
 
          <ImageView
              android:id="@+id/example_img"
-             android:layout_width="56dp"
-             android:layout_height="56dp"
+             android:layout_width="30dp"
+             android:layout_height="30dp"
              android:layout_marginLeft="6dp"
              android:layout_marginTop="4dp"
              android:src="@drawable/ola" />
 
          <ImageView
              android:id="@+id/imageView1"
-             android:layout_width="80dp"
-             android:layout_height="50dp"
-             android:layout_marginLeft="2dp"
-             android:layout_marginTop="-5dp"
-             android:layout_marginBottom="-8dp"
-             android:layout_alignParentTop="true"
+             android:layout_width="34dp"
+             android:layout_height="34dp"
              android:layout_alignParentBottom="true"
+             android:layout_alignParentTop="true"
+             android:layout_marginLeft="4dp"
              android:src="@drawable/olawars_profile_frame" />
 
          <TextView
              android:id="@+id/olapoints"
              style="@style/MyListTitle"
-             android:layout_width="200px"
+             android:layout_width="130dp"
              android:layout_height="wrap_content"
              android:layout_alignBottom="@+id/imageView1"
              android:layout_alignLeft="@+id/user_name"
+             android:layout_marginLeft="30dp"
              android:textColor="#175600" />
 
          <TextView
              android:id="@+id/playerRank"
              style="@style/MyListTitle"
-             android:layout_width="100px"
+             android:layout_width="50dp"
              android:layout_height="wrap_content"
-             android:layout_alignBaseline="@+id/olapoints"
-             android:layout_alignBottom="@+id/olapoints"
-             android:layout_alignRight="@+id/user_name"
+             android:layout_alignParentBottom="true"
+             android:layout_marginLeft="19dp"
+             android:layout_toRightOf="@+id/imageView1"
              android:gravity="center"
              android:textColor="#175600" />
+
+         <ImageView
+             android:id="@+id/imageView3"
+             android:layout_width="34dp"
+             android:layout_height="34dp"
+             android:layout_alignRight="@+id/user_name"
+             android:layout_alignTop="@+id/user_name"
+             android:src="@drawable/mini_car" />
+
      </RelativeLayout>
 
      <RelativeLayout
-         android:id="@+id/imageView3"
+         android:id="@+id/imageView4"
          android:layout_width="fill_parent"
          android:layout_height="3dp"
          android:background="@drawable/olawars_divider"
          android:layout_marginTop="50dp"
-         android:tag="imageView2" >
+         android:tag="imageView4" >
      </RelativeLayout>
 
 </FrameLayout>
