@@ -37,6 +37,7 @@ var userSchema = new mongoose.Schema({
     snid: {type: Number, default: 0},
     snuid: {type: String, default: ""},
     rides: {type: Array, default: []},
+    sn_name: {type: String, default: ""},
     sn_friend_list_last_updated_at: { type: Date},
     sn_friend_list: {type: Array, default: []},  //format pid_snuid_name
     city: {type: String, default: "bangalore"},
@@ -63,7 +64,7 @@ userSchema.statics.updateScore = function(id, score) {
 }
 
 userSchema.statics.getCity = function(id, callback) {
-	User.findOne({'id': pid }, function(err, user) {
+	User.findOne({'id': id }, function(err, user) {
 		if(!user || err) {
 			console.log("No such user", id, err);
 			callback(false);
@@ -198,6 +199,64 @@ function getUser(req, res) {
     });
 }
 
+function getUserFromSnInfo(req, res) {
+    req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
+
+    //req.assert('duid', 'Device identifier not present').notEmpty();
+    //req.assert('pid', 'User Id invalid').notEmpty().isInt();
+    // req.assert('access_token', 'Access Token is invalid').notEmpty();
+    // req.assert('snid', 'Social network id is invalid').notEmpty().isInt();
+    // // req.assert('snuid', 'Social network uid is invalid').notEmpty().isInt();
+    // req.assert('h', 'No checksum present').notEmpty();
+    // req.assert('device_type', 'No device type present').notEmpty().isInt();
+    // req.assert('device_token', 'No device token param present');
+    // //req.assert('dau_source', 'No dau_source parameter').notEmpty();
+    // var errors = req.validationErrors();
+    var snuid = req.params.snuid;
+    var access_token = req.params.access_token;
+    var device_token = req.params.device_token;
+    
+    if(snuid === undefined) snuid = "";
+    User.getUserFromSnuid(req.params.snuid, function(user) {
+    	user.snuid = snuid;
+    	user.device_token = device_token;
+    	//do this async
+    	if(snuid !== "") {
+    		user.access_token = access_token;
+    		var currTime = Date.now();
+	        if(!user.sn_friend_list_last_updated_at ||
+	        ((currTime - user.sn_friend_list_last_updated_at)/1000 > MIN_TIME_BEFORE_SN_FRIENDS_REFRESH_IN_SECONDS)) {
+		    	getFacebookFriends(snuid, access_token, function(result){
+		    		var progress = result.length;
+		    		result.forEach(function(item) {
+			    		User.getUserFromSnuid(item.id,function(friend) {
+			    			if(friend) {
+			    				if(friend.sn_friend_list.indexOf(user.id + '_' + user.snuid + '_' + user.name) < 0 ) {
+			    					friend.sn_friend_list.push(user.id + '_' + user.snuid + '_' + user.name);
+			    				}
+			    				if(user.sn_friend_list.indexOf(friend.id + '_' + friend.snuid + '_' + friend.name) < 0 ) {
+			    					user.sn_friend_list.push(friend.id + '_' + friend.snuid + '_' + friend.name);
+			    				}
+			    				friend.save();
+			    			}
+			    			if(--progress == 0 ){
+			    				user.sn_friend_list_last_updated_at = currTime;
+			    				user.save();
+			    			}
+			    		});
+			    	});
+
+		    	});
+    		}
+    	}
+	    var retData = {};
+	    retData.snuid = user.snuid;
+	    retData.sn_name = user.sn_name;
+	    retData.total_miles = user.meta.total_miles;
+	    retData.city = user.city;
+		res.send(JSON.stringify(retData));
+    });
+}
 
 function createNewUser(req, res) {
     req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
@@ -302,28 +361,34 @@ function getlocallb(req, res) {
 
     		getzrevrange("leaderboard:" + city, 1, 3, function(result){
     			console.log("Gitesh result", result);
+    			var k = 0;
     			for(var i = 0;i<3;i++){
     				User.getUserFromDb(result[i], function(user) {
+    					var temp = {};
 	    				temp['name'] = user.name;
 						temp['snuid'] = user.snuid;
-						temp['olamiles'] = user.olamiles;
-						temp['rank'] = i+1;
+						temp['olamiles'] = user.meta.total_miles;
+						temp['rank'] = k++;
 						retObj['top'].push(temp);
-    				});
-    			}
-
+						console.log("Gts", temp);
+    			if(k == 3) {
+    			console.log("Gitesh ", retObj);
 	    		getRank(pid,function(user_rank){
 	    			var min = user_rank > 14 ? user_rank:14;
 	    			retObj['rest'] = [];
 	    			var progress = 21;
 	    			getzrevrange("leaderboard:" + city, min - 10, min + 11, function(result){
-						for(var i = min - 10; i < min + 11;) {
+						console.log("Gitesh 2", result);
+						for(var i = min - 10; i < min + 11; i++) {
 							User.getUserFromDb(result[i], function(user) {
-			    				temp['name'] = user.name;
-								temp['snuid'] = user.snuid;
-								temp['olamiles'] = user.olamiles;
-								temp['rank'] = i+1;
-								retObj['top'].push(temp);
+								if(user){
+									var temp ={};
+				    				temp['name'] = user.name;
+									temp['snuid'] = user.snuid;
+									temp['olamiles'] =  user.meta.total_miles;
+									temp['rank'] = k++;
+									retObj['rest'].push(temp);
+								}
 								if(--progress == 0){
 									res.send(JSON.stringify(retObj));	
 								}
@@ -331,10 +396,12 @@ function getlocallb(req, res) {
 						}
 					});
 	    		});
+	    		}
+	    	});
+    		}
     		});
     	}
     });
-    User.updateScore(pid, score);
 }
 
 function sendPushNotif1(pid, other_snuid) {
@@ -528,7 +595,7 @@ getFBFriendsBetweenRank = function(pid, min, max, cb) {
 getzrevrange = function(leaderboard, min, max, callback) {
     var chain = redis_client.multi();
     
-    chain.zrevrange(leaderboard, min-1, max -1, 'withscores')
+    chain.zrevrange(leaderboard, min-1, max -1)
     chain.exec(function(err, result) {
         if(err || !result) {
             winston.info("isTournamentFinished : cant find the users in redis!");
@@ -539,7 +606,7 @@ getzrevrange = function(leaderboard, min, max, callback) {
     });
 }
 
-getRank = function(pid) {
+getRank = function(pid, callback) {
 	redis_client.zrevrank(pid, function(err, reply) {
 		if (!err && reply) {
 			return callback(reply);
@@ -554,7 +621,7 @@ getFriendsChips = function(friend_ids, callback) {
 	var index = [];
 	var count = 0;
 	friend_ids.forEach(function(item) {
-		chain.zscore('leaderboards:global', item.split('_')[0]);
+		chain.zscore('leaderboard:global', item.split('_')[0]);
 		index[count++] = item;
 	});
 
