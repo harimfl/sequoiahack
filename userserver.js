@@ -64,7 +64,7 @@ userSchema.statics.updateScore = function(id, score) {
 }
 
 userSchema.statics.getCity = function(id, callback) {
-	User.findOne({'id': pid }, function(err, user) {
+	User.findOne({'id': id }, function(err, user) {
 		if(!user || err) {
 			console.log("No such user", id, err);
 			callback(false);
@@ -303,21 +303,26 @@ function getlocallb(req, res) {
 
     		getzrevrange("leaderboard:" + city, 1, 3, function(result){
     			console.log("Gitesh result", result);
+    			var k = 0;
     			for(var i = 0;i<3;i++){
     				User.getUserFromDb(result[i], function(user) {
+    					var temp = {};
 	    				temp['name'] = user.name;
 						temp['snuid'] = user.snuid;
 						temp['olamiles'] = user.olamiles;
 						temp['rank'] = i+1;
 						retObj['top'].push(temp);
+						k++;
     				});
     			}
-
+    			if(k == 3) {
+    			console.log("Gitesh ", retObj);
 	    		getRank(pid,function(user_rank){
 	    			var min = user_rank > 14 ? user_rank:14;
 	    			retObj['rest'] = [];
 	    			var progress = 21;
 	    			getzrevrange("leaderboard:" + city, min - 10, min + 11, function(result){
+						console.log("Gitesh 2", result);
 						for(var i = min - 10; i < min + 11;) {
 							User.getUserFromDb(result[i], function(user) {
 			    				temp['name'] = user.name;
@@ -332,10 +337,10 @@ function getlocallb(req, res) {
 						}
 					});
 	    		});
+	    		}
     		});
     	}
     });
-    User.updateScore(pid, score);
 }
 
 function sendPushNotif1(pid, other_snuid) {
@@ -529,7 +534,7 @@ getFBFriendsBetweenRank = function(pid, min, max, cb) {
 getzrevrange = function(leaderboard, min, max, callback) {
     var chain = redis_client.multi();
     
-    chain.zrevrange(leaderboard, min-1, max -1, 'withscores')
+    chain.zrevrange(leaderboard, min-1, max -1)
     chain.exec(function(err, result) {
         if(err || !result) {
             winston.info("isTournamentFinished : cant find the users in redis!");
@@ -540,7 +545,7 @@ getzrevrange = function(leaderboard, min, max, callback) {
     });
 }
 
-getRank = function(pid) {
+getRank = function(pid, callback) {
 	redis_client.zrevrank(pid, function(err, reply) {
 		if (!err && reply) {
 			return callback(reply);
@@ -555,7 +560,7 @@ getFriendsChips = function(friend_ids, callback) {
 	var index = [];
 	var count = 0;
 	friend_ids.forEach(function(item) {
-		chain.zscore('leaderboards:global', item.split('_')[0]);
+		chain.zscore('leaderboard:global', item.split('_')[0]);
 		index[count++] = item;
 	});
 
