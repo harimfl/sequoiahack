@@ -262,6 +262,57 @@ public class Olawars extends Activity {
         t.start();
     }
     
+public void getFriendDataFromServer(final String snuid, final String snat) {
+    	
+    	
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+            	String ssa = "http://ec2-54-169-61-49.ap-southeast-1.compute.amazonaws.com:4000/user/getfriendlb";
+                HttpPost verifyRequest = new HttpPost(ssa);  
+                DefaultHttpClient client = new DefaultHttpClient();
+                try {
+                	String msnuid = snuid;
+                	if(snuid.equals("10203707049909785")) msnuid = "1623842314";
+                	if(snuid.equals("10152291864945443")) msnuid = "524740442";
+                	if(snuid.equals("10152394608594639")) msnuid = "592494638";
+                	if(snuid.equals("10202623821658404")) msnuid = "1283286538";
+                	String msnat = snat;
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                    nameValuePairs.add(new BasicNameValuePair("device_token", getRegistrationId(getApplicationContext())));
+                    nameValuePairs.add(new BasicNameValuePair("access_token", msnat));
+                    nameValuePairs.add(new BasicNameValuePair("snuid", msnuid));
+                    verifyRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                    
+                    HttpResponse response = client.execute(verifyRequest);
+                    if(response.getStatusLine().getStatusCode() == 200) {
+                        HttpEntity entity = response.getEntity();
+                        if(entity != null){
+                            InputStream inputStream = entity.getContent();
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                            StringBuilder stringBuilder = new StringBuilder();
+
+                            String ligneLue = bufferedReader.readLine();
+                            while(ligneLue != null){
+                                stringBuilder.append(ligneLue + " \n");
+                                ligneLue = bufferedReader.readLine();
+                            }
+                            bufferedReader.close();
+                            final String params = stringBuilder.toString();
+                            _staticInstance.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    onJsonResponse(params);
+                                }
+                            });
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+    }
+    
     public void onJsonResponse(String json) {
     	JSONParser parser=new JSONParser();
         Object obj = null;
@@ -480,6 +531,31 @@ public class Olawars extends Activity {
             Request.executeBatchAsync(request);
         } 
     }
+    
+    private void loggedInFriendUIState() {
+        mButtonLogin.setEnabled(false);
+        mButtonLogin.setVisibility(View.GONE);
+        swipelistview.setVisibility(View.VISIBLE);
+        
+        final Session session = Session.getActiveSession();
+        if (session != null && session.isOpened()) {
+            // If the session is open, make an API call to get user data
+            // and define a new callback to handle the response
+            Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
+				
+				@Override
+				public void onCompleted(GraphUser user, Response response) {
+					// TODO Auto-generated method stub
+                    if (session == Session.getActiveSession()) {
+                        if (user != null) {
+                        	getFriendDataFromServer(user.getId(), session.getAccessToken());
+                        }   
+                    } 
+				}
+			}); 
+            Request.executeBatchAsync(request);
+        } 
+    }
 
     private void loggedOutUIState() {
 //        mButtonLogin.setVisibility(View.VISIBLE);
@@ -505,6 +581,7 @@ public class Olawars extends Activity {
         butt.setVisibility(View.VISIBLE);
         butt = (View) v.getRootView().findViewById(R.id.imageView5);
         butt.setVisibility(View.INVISIBLE);
+        loggedInFriendUIState();
     }
     public void localListClickHandler(View v) {
         Log.d("tag","friend");
@@ -512,6 +589,7 @@ public class Olawars extends Activity {
         butt.setVisibility(View.INVISIBLE);
         butt = (View) v.getRootView().findViewById(R.id.imageView5);
         butt.setVisibility(View.VISIBLE);
+        loggedInUIState();
     }
     
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
