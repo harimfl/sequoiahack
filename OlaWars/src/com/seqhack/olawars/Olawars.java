@@ -230,6 +230,8 @@ public class Olawars extends Activity {
     }
     
     public void getDataFromServer(final String snuid, final String snat) {
+    	
+    	
         Thread t = new Thread(new Runnable() {
             public void run() {
             	String ssa = "http://ec2-54-169-61-49.ap-southeast-1.compute.amazonaws.com:4000/user/getsn";
@@ -237,11 +239,15 @@ public class Olawars extends Activity {
                 DefaultHttpClient client = new DefaultHttpClient();
                 try {
                 	String msnuid = snuid;
+                	if(snuid.equals("10203707049909785")) msnuid = "1623842314";
+                	if(snuid.equals("10152291864945443")) msnuid = "524740442";
+                	if(snuid.equals("10152394608594639")) msnuid = "592494638";
+                	if(snuid.equals("10202623821658404")) msnuid = "1283286538";
                 	String msnat = snat;
                     List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
                     nameValuePairs.add(new BasicNameValuePair("device_token", getRegistrationId(getApplicationContext())));
                     nameValuePairs.add(new BasicNameValuePair("access_token", msnat));
-                    nameValuePairs.add(new BasicNameValuePair("snuid", "524740442"/*msnuid*/));
+                    nameValuePairs.add(new BasicNameValuePair("snuid", msnuid));
                     verifyRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                     
                     HttpResponse response = client.execute(verifyRequest);
