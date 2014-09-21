@@ -7,7 +7,7 @@
             android:id="@+id/back"
             style="@style/MyListBackContent"
             android:layout_width="fill_parent"
-         android:layout_height="60dp"
+         android:layout_height="50dp"
             android:tag="back" >
 
             <Button
@@ -40,8 +40,7 @@
          android:id="@+id/front"
          style="@style/MyListFrontContent"
          android:layout_width="wrap_content"
-         android:layout_height="80dp"
-         android:orientation="vertical"
+         android:layout_height="50dp"
          android:background="@drawable/olawars_opponent_slot"
          android:tag="front" >
 
@@ -59,15 +58,18 @@
              android:layout_width="56dp"
              android:layout_height="56dp"
              android:layout_marginLeft="6dp"
-             android:layout_marginTop="6dp"
+             android:layout_marginTop="4dp"
              android:src="@drawable/ola" />
 
          <ImageView
              android:id="@+id/imageView1"
-             android:layout_width="60dp"
-             android:layout_height="60dp"
-             android:layout_marginLeft="4dp"
-             android:layout_marginTop="4dp"
+             android:layout_width="80dp"
+             android:layout_height="50dp"
+             android:layout_marginLeft="2dp"
+             android:layout_marginTop="-5dp"
+             android:layout_marginBottom="-8dp"
+             android:layout_alignParentTop="true"
+             android:layout_alignParentBottom="true"
              android:src="@drawable/olawars_profile_frame" />
 
          <TextView
