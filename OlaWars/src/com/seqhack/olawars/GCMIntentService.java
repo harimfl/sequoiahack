@@ -77,7 +77,7 @@ public class GCMIntentService extends GCMBaseIntentService
         PendingIntent pIntent = PendingIntent.getBroadcast(GCMIntentService.this, 1, new Intent(GCMIntentService.this, NotificationView.class), PendingIntent.FLAG_CANCEL_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.icon).setAutoCancel(true).setContentIntent(pIntent).setContent(remoteViews);
         
-        String other_name, traveller_snuid, other_snuid, traveller_name, num_people, ssa;
+        String other_name, traveller_snuid, other_snuid, traveller_name, num_people, ssa, player_snuid;
         HttpGet verifyRequest;
         DefaultHttpClient client;
         
@@ -163,7 +163,7 @@ public class GCMIntentService extends GCMBaseIntentService
                 		try {
                 			obj = parser.parse(params);
                 			JSONObject jsonObject = (JSONObject)obj;
-                            other_name = jsonObject.get("first_name").toString();
+                            traveller_name = jsonObject.get("first_name").toString();
                 		} catch (ParseException e) {
                 			// TODO Auto-generated catch block
                 			e.printStackTrace();
@@ -187,6 +187,7 @@ public class GCMIntentService extends GCMBaseIntentService
         	
         	break;
         case 3:
+        	player_snuid = b.getString("player_snuid");
         	num_people = b.getString("num_people");
         	remoteViews.setViewVisibility(R.id.cardback1, View.VISIBLE);
         	remoteViews.setViewVisibility(R.id.cardback2, View.VISIBLE);
@@ -196,9 +197,11 @@ public class GCMIntentService extends GCMBaseIntentService
         	remoteViews.setViewVisibility(R.id.cardback5, View.INVISIBLE);
         	remoteViews.setViewVisibility(R.id.cardback55, View.INVISIBLE);
         	remoteViews.setTextViewText(R.id.notiftext1, "You Ran Over " + num_people + " People");
+        	remoteViews.setImageViewBitmap(R.id.cardback33, getBitmapFromURL("https://graph.facebook.com/" + player_snuid + "/picture?type=normal&height=150&width=150", player_snuid));
         	break;
         	
         case 4:
+        	player_snuid = b.getString("player_snuid");
         	num_people = b.getString("num_people");
         	remoteViews.setViewVisibility(R.id.cardback1, View.VISIBLE);
         	remoteViews.setViewVisibility(R.id.cardback2, View.INVISIBLE);
@@ -208,6 +211,7 @@ public class GCMIntentService extends GCMBaseIntentService
         	remoteViews.setViewVisibility(R.id.cardback5, View.VISIBLE);
         	remoteViews.setViewVisibility(R.id.cardback55, View.VISIBLE);
         	remoteViews.setTextViewText(R.id.notiftext1, num_people + " People Ran you over");
+        	remoteViews.setImageViewBitmap(R.id.cardback55, getBitmapFromURL("https://graph.facebook.com/" + player_snuid + "/picture?type=normal&height=150&width=150", player_snuid));
         	break;
         	
         }
