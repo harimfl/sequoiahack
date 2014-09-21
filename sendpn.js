@@ -49,7 +49,7 @@ if(p2 == "beat") {
     sendPn1(device_tokens[p1-1], snuids[p1-1], snuids[p3-1]);
     sendPn2(device_tokens[p3-1], snuids[p3-1], snuids[p1-1]);
 } else {
-    sendPn3(device_tokens[p1-1], p2);
+    sendPn3(device_tokens[p1-1], snuids[p1-1], p2);
 }
 
 
@@ -93,7 +93,7 @@ function sendPn2(d2, s1, s2) {
     });
 }
 
-function sendPn3(d1, n1) {
+function sendPn3(d1, s1, n1) {
     var msg = new gcm.Message();
     msg.collapseKey = '2';
     msg.delayWhileIdle = true;
@@ -102,6 +102,7 @@ function sendPn3(d1, n1) {
     msg.addData('type', 3); 
     msg.addData('ts',Date.now());
     msg.addData('num_people', n1);
+    msg.addData('player_snuid', s1);
     gcmsender.send(msg, [d1], 2, function (err, result) {
         if(err) {
             //TODO: Sample this?
