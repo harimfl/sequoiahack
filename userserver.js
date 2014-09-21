@@ -39,6 +39,7 @@ var userSchema = new mongoose.Schema({
     sn_friend_list_last_updated_at: { type: Date},
     sn_friend_list: {type: Array, default: []},  //format pid_snuid_name
     city: {type: String, default: "bangalore"},
+    device_token: {type: String, default: ""},
     meta: {
         total_miles: {type: Number, default: 0},
         total_time_spent_ms: {type: Number, default: 0},
@@ -148,11 +149,12 @@ function getUser(req, res) {
     // var errors = req.validationErrors();
     var snuid = req.params.snuid;
     var access_token = req.params.access_token;
+    var device_token = req.params.device_token;
     
     if(snuid === undefined) snuid = "";
     User.getUserFromDb(req.params.pid, function(user) {
     	user.snuid = snuid;
-    	
+    	user.device_token = device_token;
     	//do this async
     	if(snuid !== "") {
     		user.access_token = access_token;
@@ -245,21 +247,27 @@ function updateScore(req, res) {
 	req.assert('pid', 'User Id invalid').notEmpty();
     var pid = req.params.pid;
     User.updateScore(pid, score);
-    User.getCity(pid, function(city) {
-    	if(city && city != "") {
+    User.getUserFromDb(pid, function(user) {
+    	if(user.city && user.city != "") {
     		getFBRank(pid, 
     			function(rank1) {
-    				updateLeaderBoard("leaderboard:" + city ,pid, score);
+    				updateLeaderBoard("leaderboard:" + user.city ,pid, score);
 					updateGlobalLeaderBoard(pid, score);
 		    		getFBRank(pid, 
 			    		function(rank2) {
-			    			getFBFriendsBetweenRank(pid, rank1, rank2, function(snuids){
-			    				//use snuids here
+                            //send PN since moved ahead by N ranks.
+                            sendPushNotif3(pid, rank2-rank1);
+
+			    			getFBFriendsBetweenRank(pid, rank1, rank2, function(pid_mile_snuid_array){
+                                sendPushNotif1(pid, pid_mile_snuid_array[Math.floor(Math.random() * pid_mile_snuid_array.length)][2]);
+                                for(var j = 0; j < pid_mile_snuid_array.length; j++) {
+                                    sendPushNotif2(pid_mile_snuid_array[j][0], user.snuid);
+                                }
 			    			});
 			    		}
 		    		);
 		    });
-    		updateLeaderBoard("leaderboard:" + city ,pid, score);
+    		updateLeaderBoard("leaderboard:" + user.city ,pid, score);
     		updateGlobalLeaderBoard(pid, score);
     	}
     });
@@ -313,6 +321,105 @@ function getlocallb(req, res) {
     User.updateScore(pid, score);
 }
 
+function sendPushNotif1(pid, other_snuid) {
+    User.getUserFromDb(pid, function(user) {
+        var msg = new gcm.Message();
+        msg.collapseKey = '2';
+        msg.delayWhileIdle = true;
+        msg.timeToLive = parseInt(1000);
+        msg.timeToLive = 0;
+
+        msg.addData('type', 1); 
+        msg.addData('traveller_snuid', user.snuid);
+        msg.addData('other_snuid', other_snuid);
+        msg.addData('ts',Date.now());
+
+        gcmsender.send(msg, [user.device_token], 2, function (err, result) {
+            if(err) {
+                //TODO: Sample this?
+                console.log("Gitesh sent pn fail", err);
+            } else {
+                console.log("Gitesh sent pn");
+            }
+        });
+    });
+}
+
+function sendPushNotif2(pid, traveller_snuid) {
+    User.getUserFromDb(pid, function(user) {
+        var msg = new gcm.Message();
+        msg.collapseKey = '2';
+        msg.delayWhileIdle = true;
+        msg.timeToLive = parseInt(1000);
+        msg.timeToLive = 0;
+
+        msg.addData('type', 2); 
+        msg.addData('traveller_snuid', traveller_snuid);
+        msg.addData('other_snuid', user.snuid);
+        msg.addData('ts',Date.now());
+
+        gcmsender.send(msg, [user.device_token], 2, function (err, result) {
+            if(err) {
+                //TODO: Sample this?
+                console.log("Gitesh sent pn fail", err);
+            } else {
+                console.log("Gitesh sent pn");
+            }
+        });
+    });
+}
+
+function sendPushNotif3(pid, diff) {
+    User.getUserFromDb(pid, function(user) {
+        var msg = new gcm.Message();
+        msg.collapseKey = '2';
+        msg.delayWhileIdle = true;
+        msg.timeToLive = parseInt(1000);
+        msg.timeToLive = 0;
+
+        msg.addData('type', 3); 
+        msg.addData('num_people', diff);
+
+        msg.addData('ts', Date.now());
+
+        gcmsender.send(msg, [user.device_token], 2, function (err, result) {
+            if(err) {
+                //TODO: Sample this?
+                console.log("Gitesh sent pn fail", err);
+            } else {
+                console.log("Gitesh sent pn");
+            }
+        });
+    });
+}
+
+function sendPushNotif4(req, res) {
+    req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
+    var pid = req.params.pid;
+    var num_people = req.params.num_people;
+
+    User.getUserFromDb(pid, function(user) {
+        var msg = new gcm.Message();
+        msg.collapseKey = '2';
+        msg.delayWhileIdle = true;
+        msg.timeToLive = parseInt(1000);
+        msg.timeToLive = 0;
+
+        msg.addData('type', 4); 
+        msg.addData('num_people', num_people);
+
+        msg.addData('ts', Date.now());
+
+        gcmsender.send(msg, [user.device_token], 2, function (err, result) {
+            if(err) {
+                //TODO: Sample this?
+                console.log("Gitesh sent pn fail", err);
+            } else {
+                console.log("Gitesh sent pn");
+            }
+        });
+    });
+}
 
 function getfriendlb(req, res) {
 	//res.send(JSON.stringify(_dummydata));return;
@@ -394,7 +501,7 @@ getFBFriendsBetweenRank = function(pid, min, max, cb) {
 				sortable.sort(function(a, b) {return b[1] - a[1]});	
 				var friends = [];
 				for (var i =min; i<max + 1;i++) {
-					friends.push(sortable[i][2]);
+					friends.push(sortable[i]);
 				}
 				cb(friends);
    			});
@@ -461,3 +568,6 @@ app.post('/user/getlocallb', getlocallb);
 
 app.get('/user/getfriendlb', getfriendlb);
 app.post('/user/getfriendlb', getfriendlb);
+
+app.get('/user/send_pn_4', sendPushNotif4);
+app.post('/user/send_pn_4', sendPushNotif4);
