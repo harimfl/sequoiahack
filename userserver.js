@@ -199,6 +199,64 @@ function getUser(req, res) {
     });
 }
 
+function getUserFromSnInfo(req, res) {
+    req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
+
+    //req.assert('duid', 'Device identifier not present').notEmpty();
+    //req.assert('pid', 'User Id invalid').notEmpty().isInt();
+    // req.assert('access_token', 'Access Token is invalid').notEmpty();
+    // req.assert('snid', 'Social network id is invalid').notEmpty().isInt();
+    // // req.assert('snuid', 'Social network uid is invalid').notEmpty().isInt();
+    // req.assert('h', 'No checksum present').notEmpty();
+    // req.assert('device_type', 'No device type present').notEmpty().isInt();
+    // req.assert('device_token', 'No device token param present');
+    // //req.assert('dau_source', 'No dau_source parameter').notEmpty();
+    // var errors = req.validationErrors();
+    var snuid = req.params.snuid;
+    var access_token = req.params.access_token;
+    var device_token = req.params.device_token;
+    
+    if(snuid === undefined) snuid = "";
+    User.getUserFromSnuid(req.params.snuid, function(user) {
+    	user.snuid = snuid;
+    	user.device_token = device_token;
+    	//do this async
+    	if(snuid !== "") {
+    		user.access_token = access_token;
+    		var currTime = Date.now();
+	        if(!user.sn_friend_list_last_updated_at ||
+	        ((currTime - user.sn_friend_list_last_updated_at)/1000 > MIN_TIME_BEFORE_SN_FRIENDS_REFRESH_IN_SECONDS)) {
+		    	getFacebookFriends(snuid, access_token, function(result){
+		    		var progress = result.length;
+		    		result.forEach(function(item) {
+			    		User.getUserFromSnuid(item.id,function(friend) {
+			    			if(friend) {
+			    				if(friend.sn_friend_list.indexOf(user.id + '_' + user.snuid + '_' + user.name) < 0 ) {
+			    					friend.sn_friend_list.push(user.id + '_' + user.snuid + '_' + user.name);
+			    				}
+			    				if(user.sn_friend_list.indexOf(friend.id + '_' + friend.snuid + '_' + friend.name) < 0 ) {
+			    					user.sn_friend_list.push(friend.id + '_' + friend.snuid + '_' + friend.name);
+			    				}
+			    				friend.save();
+			    			}
+			    			if(--progress == 0 ){
+			    				user.sn_friend_list_last_updated_at = currTime;
+			    				user.save();
+			    			}
+			    		});
+			    	});
+
+		    	});
+    		}
+    	}
+	    var retData = {};
+	    retData.snuid = user.snuid;
+	    retData.sn_name = user.sn_name;
+	    retData.total_miles = user.meta.total_miles;
+	    retData.city = user.city;
+		res.send(JSON.stringify(retData));
+    });
+}
 
 function createNewUser(req, res) {
     req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
@@ -309,7 +367,7 @@ function getlocallb(req, res) {
     					var temp = {};
 	    				temp['name'] = user.name;
 						temp['snuid'] = user.snuid;
-						temp['olamiles'] = user.total_miles;
+						temp['olamiles'] = user.meta.total_miles;
 						temp['rank'] = k++;
 						retObj['top'].push(temp);
 						console.log("Gts", temp);
@@ -324,9 +382,10 @@ function getlocallb(req, res) {
 						for(var i = min - 10; i < min + 11; i++) {
 							User.getUserFromDb(result[i], function(user) {
 								if(user){
+									var temp ={};
 				    				temp['name'] = user.name;
 									temp['snuid'] = user.snuid;
-									temp['olamiles'] = user.total_miles;
+									temp['olamiles'] =  user.meta.total_miles;
 									temp['rank'] = k++;
 									retObj['rest'].push(temp);
 								}

@@ -4,40 +4,38 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ImageView
+    <RelativeLayout
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
-        android:layout_height="110dp"
-        android:src="@drawable/olawars_leaderboard_header" />
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/olawars_leaderboard_header"
+        android:orientation="vertical"
+        android:tag="imageView1" >
 
-    <com.fortysevendeg.swipelistview.SwipeListView
-        android:id="@+id/example_swipe_lv_list"
-        android:layout_width="fill_parent"
-        android:layout_height="310dp"
-        android:listSelector="#00000000"
-        swipe:swipeBackView="@+id/back"
-        swipe:swipeCloseAllItemsWhenMoveList="true"
-        swipe:swipeDrawableChecked="@drawable/choice_selected"
-        swipe:swipeDrawableUnchecked="@drawable/choice_unselected"
-        swipe:swipeFrontView="@+id/front"
-        swipe:swipeMode="both" >
-    </com.fortysevendeg.swipelistview.SwipeListView>
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="7 days 00 Hours 00 Mins"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+        </RelativeLayout>
 
     <Button
         android:id="@+id/button_login"
         android:layout_width="150dp"
         android:layout_height="70dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:layout_margin="90dp"
         android:background="@drawable/facebook_button" />
 
     <TextView
         android:id="@+id/text_status"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button_login"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="wrap_content" />
 
     <RelativeLayout
         android:id="@+id/imageView2"
@@ -51,7 +49,7 @@
         android:tag="imageView2" >
 
         <TextView
-            android:id="@+id/friendsBoard"
+            android:id="@+id/localBoard"
             style="@style/MyListTitle"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
@@ -59,20 +57,104 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="33dp"
             android:gravity="center"
-            android:text="Friends"
+            android:text="Local"
+            android:textColor="@color/white"
             android:textSize="25sp" />
 
         <TextView
-            android:id="@+id/localBoard"
+            android:id="@+id/friendsBoard"
             style="@style/MyListTitle"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="51dp"
+            android:layout_marginRight="30dp"
             android:gravity="center"
-            android:text="Local"
+            android:text="Friends"
+            android:textColor="@color/white"
             android:textSize="25sp" />
+
+     </RelativeLayout>
+     
+    <RelativeLayout
+            android:id="@+id/imageView5"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageView2"
+            android:background="@drawable/olawars_leaderboard_footer_highlight"
+            android:tag="imageView5" >
+        <TextView
+            android:id="@+id/lobbyBoardDummy"
+            style="@style/MyListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="33dp"
+            android:gravity="center"
+            android:text="Lobby"
+            android:textColor="@color/white"
+            android:textSize="25sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/imageView6"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/imageView2"
+            android:layout_alignTop="@+id/imageView2"
+            android:background="@drawable/olawars_leaderboard_footer_highlight"
+            android:tag="imageView6"
+            android:visibility="invisible" >
+
+        <TextView
+            android:id="@+id/friendBoardDummy"
+            style="@style/MyListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="30dp"
+            android:gravity="center"
+            android:text="Friends"
+            android:textColor="@color/white"
+            android:textSize="25sp" />
+        </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/imageView2"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/imageView1"
+        android:orientation="vertical"
+        android:tag="imageView3" >
+
+        <com.fortysevendeg.swipelistview.SwipeListView
+            android:id="@+id/example_swipe_lv_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:listSelector="#00000000"
+            swipe:swipeBackView="@+id/back"
+            swipe:swipeCloseAllItemsWhenMoveList="true"
+            swipe:swipeDrawableChecked="@drawable/choice_selected"
+            swipe:swipeDrawableUnchecked="@drawable/choice_unselected"
+            swipe:swipeFrontView="@+id/front"
+            swipe:swipeMode="both" >
+        </com.fortysevendeg.swipelistview.SwipeListView>
+
+        <RelativeLayout
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/example_swipe_lv_list"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/olawars_menu_shadow"
+        android:layout_below="@+id/imageView4"
+        android:orientation="vertical"
+        android:tag="imageView4" />
 
     </RelativeLayout>
 

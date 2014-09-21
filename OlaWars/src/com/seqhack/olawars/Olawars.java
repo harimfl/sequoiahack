@@ -104,8 +104,7 @@ public class Olawars extends Activity {
         swipelistview=(SwipeListView)findViewById(R.id.example_swipe_lv_list); 
 
         mButtonLogin = (Button) findViewById(R.id.button_login);
-        mTextStatus = (TextView) findViewById(R.id.text_status);
-        
+        mTextStatus = (TextView) findViewById(R.id.text_status);        
         
         mButtonLogin.setOnClickListener(new OnClickListener() {
 			@Override
@@ -275,7 +274,7 @@ public class Olawars extends Activity {
     public void onJsonResponse(String json) {
     	JSONParser parser=new JSONParser();
         Object obj = null;
-//        json = "{	\"top\" : [			{				\"name\" : \"hari\",				\"rank\" : 1,				\"snuid\" : \"1623842314\",				\"chips\"	: 3444			},			{				\"name\" : \"gitesh\",				\"rank\" : 2,				\"snuid\" : \"1283286538\",				\"chips\"	: 5444			},			{				\"name\" : \"srinaths\",				\"rank\" : 3,				\"snuid\" : \"524740442\",				\"chips\"	: 7444			}		],	\"rest\" : [			{				\"name\" : \"srinath1\",				\"rank\" : 6,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3144			},			{				\"name\" : \"srinath2\",				\"rank\" : 8,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3644			},			{				\"name\" : \"srinath3\",				\"rank\" : 9,				\"snuid\" : \"134593487234987\",				\"chips\"	: 3044			}	]}";
+        json = "{	\"top\" : [			{				\"name\" : \"hari\",				\"rank\" : 1,				\"snuid\" : \"1623842314\",				\"chips\"	: 3444			},			{				\"name\" : \"gitesh\",				\"rank\" : 2,				\"snuid\" : \"1283286538\",				\"chips\"	: 5444			},			{				\"name\" : \"srinaths\",				\"rank\" : 3,				\"snuid\" : \"524740442\",				\"chips\"	: 7444			}		],	\"rest\" : [			{				\"name\" : \"srinath1\",				\"rank\" : 6,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3144			},			{				\"name\" : \"srinath2\",				\"rank\" : 8,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3644			},			{				\"name\" : \"srinath3\",				\"rank\" : 9,				\"snuid\" : \"134593487234987\",				\"chips\"	: 3044			}	]}";
 		try {
 			obj = parser.parse(json);
 		} catch (ParseException e) {
@@ -473,7 +472,7 @@ public class Olawars extends Activity {
     private void loggedInUIState() {
         mButtonLogin.setEnabled(false);
         mButtonLogin.setVisibility(View.GONE);
-        swipelistview.setVisibility(View.VISIBLE);
+//        swipelistview.setVisibility(View.VISIBLE);
         mTextStatus.setText("");
         
         final Session session = Session.getActiveSession();
@@ -497,10 +496,10 @@ public class Olawars extends Activity {
     }
 
     private void loggedOutUIState() {
-        mButtonLogin.setVisibility(View.VISIBLE);
-        mButtonLogin.setEnabled(true);
-        swipelistview.setVisibility(View.GONE);
-        mTextStatus.setText("");
+//        mButtonLogin.setVisibility(View.VISIBLE);
+//        mButtonLogin.setEnabled(true);
+//        swipelistview.setVisibility(View.GONE);
+//        mTextStatus.setText("");
     }
     
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
