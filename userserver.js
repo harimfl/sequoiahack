@@ -37,6 +37,7 @@ var userSchema = new mongoose.Schema({
     snid: {type: Number, default: 0},
     snuid: {type: String, default: ""},
     rides: {type: Array, default: []},
+    sn_name: {type: String, default: ""},
     sn_friend_list_last_updated_at: { type: Date},
     sn_friend_list: {type: Array, default: []},  //format pid_snuid_name
     city: {type: String, default: "bangalore"},
