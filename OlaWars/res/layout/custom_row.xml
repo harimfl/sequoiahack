@@ -45,13 +45,14 @@
          android:background="@drawable/olawars_opponent_slot"
          android:tag="front" >
 
-
          <TextView
              android:id="@+id/user_name"
              style="@style/MyListTitle"
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
-             android:layout_marginLeft="80dp" />
+             android:layout_marginLeft="80dp"
+             android:gravity="center"
+             android:textSize="25sp" />
 
          <ImageView
              android:id="@+id/example_img"
@@ -74,16 +75,18 @@
              style="@style/MyListTitle"
              android:layout_width="200px"
              android:layout_height="wrap_content"
-             android:layout_alignBottom="@+id/example_img"
-             android:layout_toLeftOf="@+id/playerRank" />
+             android:layout_alignBottom="@+id/imageView1"
+             android:layout_alignLeft="@+id/user_name" />
 
          <TextView
              android:id="@+id/playerRank"
              style="@style/MyListTitle"
              android:layout_width="100px"
              android:layout_height="wrap_content"
+             android:layout_alignBaseline="@+id/olapoints"
+             android:layout_alignBottom="@+id/olapoints"
              android:layout_alignRight="@+id/user_name"
-             android:layout_below="@+id/user_name" />
+             android:gravity="center" />
 
      </RelativeLayout>
 

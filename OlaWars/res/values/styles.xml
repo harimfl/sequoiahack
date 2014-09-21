@@ -40,10 +40,10 @@
     </style>
 
     <style name="MyListTitle">
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:textSize">17sp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:maxLines">2</item>
+        <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
     
