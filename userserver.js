@@ -142,6 +142,7 @@ request("https://graph.facebook.com/me/friends?access_token="+fb_access_token, f
 }
 
 function getUser(req, res) {
+	res.send(JSON.stringify(_dummydata2));return;
     req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
 
     //req.assert('duid', 'Device identifier not present').notEmpty();
@@ -201,6 +202,7 @@ function getUser(req, res) {
 }
 
 function getUserFromSnInfo(req, res) {
+	res.send(JSON.stringify(_dummydata2));return;
     req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
 
     //req.assert('duid', 'Device identifier not present').notEmpty();
