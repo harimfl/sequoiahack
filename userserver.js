@@ -309,12 +309,12 @@ function getlocallb(req, res) {
     					var temp = {};
 	    				temp['name'] = user.name;
 						temp['snuid'] = user.snuid;
-						temp['olamiles'] = user.olamiles;
+						temp['olamiles'] = user.total_miles;
 						temp['rank'] = i+1;
 						retObj['top'].push(temp);
+						console.log("Gts", temp);
 						k++;
-    				});
-    			}
+
     			if(k == 3) {
     			console.log("Gitesh ", retObj);
 	    		getRank(pid,function(user_rank){
@@ -327,7 +327,7 @@ function getlocallb(req, res) {
 							User.getUserFromDb(result[i], function(user) {
 			    				temp['name'] = user.name;
 								temp['snuid'] = user.snuid;
-								temp['olamiles'] = user.olamiles;
+								temp['olamiles'] = user.total_miles;
 								temp['rank'] = i+1;
 								retObj['top'].push(temp);
 								if(--progress == 0){
@@ -338,6 +338,8 @@ function getlocallb(req, res) {
 					});
 	    		});
 	    		}
+	    	});
+    		}
     		});
     	}
     });
