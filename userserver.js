@@ -1,7 +1,8 @@
 redis = require('redis');
 _ = require('underscore');
 _dummydata = require('./dummydata.json');
-
+_dummydata2 = require('./dummydata2.json');
+request = require('request');
 var redis_client;
 const MIN_TIME_BEFORE_SN_FRIENDS_REFRESH_IN_SECONDS = 100;
 var sn_list = ""
@@ -141,6 +142,7 @@ request("https://graph.facebook.com/me/friends?access_token="+fb_access_token, f
 }
 
 function getUser(req, res) {
+	res.send(JSON.stringify(_dummydata2));return;
     req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
 
     //req.assert('duid', 'Device identifier not present').notEmpty();
@@ -200,6 +202,7 @@ function getUser(req, res) {
 }
 
 function getUserFromSnInfo(req, res) {
+	res.send(JSON.stringify(_dummydata2));return;
     req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
 
     //req.assert('duid', 'Device identifier not present').notEmpty();
@@ -254,6 +257,7 @@ function getUserFromSnInfo(req, res) {
 	    retData.sn_name = user.sn_name;
 	    retData.total_miles = user.meta.total_miles;
 	    retData.city = user.city;
+	    retData.pid = user.id;
 		res.send(JSON.stringify(retData));
     });
 }
@@ -350,6 +354,7 @@ function getRandomOfLength(length) {
     return (Math.floor(Math.pow(10, length+2) + Math.random() * 9 * Math.pow(10, length-1)));
 }
 function getlocallb(req, res) {
+	res.send(JSON.stringify(_dummydata2));return;
 	req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
 	req.assert('pid', 'User Id invalid').notEmpty();
     var pid = req.params.pid;
@@ -505,7 +510,7 @@ function sendPushNotif4(req, res) {
 }
 
 function getfriendlb(req, res) {
-	//res.send(JSON.stringify(_dummydata));return;
+	res.send(JSON.stringify(_dummydata));return;
 	req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
 	req.assert('pid', 'User Id invalid').notEmpty();
     var pid = req.params.pid;
@@ -638,7 +643,10 @@ getFriendsChips = function(friend_ids, callback) {
 };
 
 app.post('/user/get', getUser);
-app.get('/user/get', getUser);
+app.get('/user/get', getUser); 
+
+app.post('/user/getsn', getUserFromSnInfo);
+app.get('/user/getsn', getUserFromSnInfo); 
 
 app.post('/user/new', createNewUser);
 app.get('/user/new', createNewUser);

@@ -11,7 +11,9 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONArray;
@@ -228,18 +230,25 @@ public class Olawars extends Activity {
     }
     
     public void getDataFromServer(final String snuid, final String snat) {
+    	
+    	
         Thread t = new Thread(new Runnable() {
             public void run() {
-            	String ssa = "http://ec2-54-169-61-49.ap-southeast-1.compute.amazonaws.com:4000/user/getfriendlb";
-                HttpGet verifyRequest = new HttpGet(ssa);  
+            	String ssa = "http://ec2-54-169-61-49.ap-southeast-1.compute.amazonaws.com:4000/user/getsn";
+                HttpPost verifyRequest = new HttpPost(ssa);  
                 DefaultHttpClient client = new DefaultHttpClient();
                 try {
                 	String msnuid = snuid;
+                	if(snuid.equals("10203707049909785")) msnuid = "1623842314";
+                	if(snuid.equals("10152291864945443")) msnuid = "524740442";
+                	if(snuid.equals("10152394608594639")) msnuid = "592494638";
+                	if(snuid.equals("10202623821658404")) msnuid = "1283286538";
                 	String msnat = snat;
                     List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
                     nameValuePairs.add(new BasicNameValuePair("device_token", getRegistrationId(getApplicationContext())));
                     nameValuePairs.add(new BasicNameValuePair("access_token", msnat));
                     nameValuePairs.add(new BasicNameValuePair("snuid", msnuid));
+                    verifyRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                     
                     HttpResponse response = client.execute(verifyRequest);
                     if(response.getStatusLine().getStatusCode() == 200) {
@@ -274,7 +283,6 @@ public class Olawars extends Activity {
     public void onJsonResponse(String json) {
     	JSONParser parser=new JSONParser();
         Object obj = null;
-        json = "{	\"top\" : [			{				\"name\" : \"hari\",				\"rank\" : 1,				\"snuid\" : \"1623842314\",				\"chips\"	: 3444			},			{				\"name\" : \"gitesh\",				\"rank\" : 2,				\"snuid\" : \"1283286538\",				\"chips\"	: 5444			},			{				\"name\" : \"srinaths\",				\"rank\" : 3,				\"snuid\" : \"524740442\",				\"chips\"	: 7444			}		],	\"rest\" : [			{				\"name\" : \"srinath1\",				\"rank\" : 6,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3144			},			{				\"name\" : \"srinath2\",				\"rank\" : 8,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3644			},			{				\"name\" : \"srinath3\",				\"rank\" : 9,				\"snuid\" : \"134593487234987\",				\"chips\"	: 3044			}	]}";
 		try {
 			obj = parser.parse(json);
 		} catch (ParseException e) {
