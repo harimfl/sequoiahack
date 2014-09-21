@@ -36,9 +36,12 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
 import com.google.android.gms.common.ConnectionResult;
@@ -108,7 +111,6 @@ public class Olawars extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Log.e("asdf", "ffff");
 				Session session = Session.getActiveSession();
 			    if (!session.isOpened() && !session.isClosed()) {
 			        session.openForRead(new Session.OpenRequest(_staticInstance)
@@ -117,21 +119,14 @@ public class Olawars extends Activity {
 			    } else {
 			        Session.openActiveSession(_staticInstance, true, callback);
 			    }
-				
 			}
 		});
         
-        
-        //mSimpleFacebook = SimpleFacebook.getInstance(this);
-        //setLogin();
-
-        if (false /*&& mSimpleFacebook.isLogin()*/) {
-            loggedInUIState();
+        if(Session.getActiveSession().isOpened()) {
+        	loggedInUIState();
+        } else {
+        	loggedOutUIState();
         }
-        else {
-            loggedOutUIState();
-        }
-        
 
         itemData=new ArrayList<ItemRow>();
         adapter=new ItemAdapter(this,R.layout.custom_row,itemData);
@@ -233,18 +228,19 @@ public class Olawars extends Activity {
         uiHelper.onSaveInstanceState(outState);
     }
     
-    public void getDataFromServer() {
+    public void getDataFromServer(final String snuid, final String snat) {
         Thread t = new Thread(new Runnable() {
             public void run() {
             	String ssa = "http://ec2-54-169-61-49.ap-southeast-1.compute.amazonaws.com:4000/user/getfriendlb";
                 HttpGet verifyRequest = new HttpGet(ssa);  
                 DefaultHttpClient client = new DefaultHttpClient();
                 try {
+                	String msnuid = snuid;
+                	String msnat = snat;
                     List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-                    nameValuePairs.add(new BasicNameValuePair("pid", "123134"));
                     nameValuePairs.add(new BasicNameValuePair("device_token", getRegistrationId(getApplicationContext())));
-                    
-//                    nameValuePairs.add(new BasicNameValuePair("access_token", mSimpleFacebook.getSession().getAccessToken()));
+                    nameValuePairs.add(new BasicNameValuePair("access_token", msnat));
+                    nameValuePairs.add(new BasicNameValuePair("snuid", msnuid));
                     
                     HttpResponse response = client.execute(verifyRequest);
                     if(response.getStatusLine().getStatusCode() == 200) {
@@ -479,7 +475,25 @@ public class Olawars extends Activity {
         mButtonLogin.setVisibility(View.GONE);
         swipelistview.setVisibility(View.VISIBLE);
         mTextStatus.setText("");
-        getDataFromServer();
+        
+        final Session session = Session.getActiveSession();
+        if (session != null && session.isOpened()) {
+            // If the session is open, make an API call to get user data
+            // and define a new callback to handle the response
+            Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
+				
+				@Override
+				public void onCompleted(GraphUser user, Response response) {
+					// TODO Auto-generated method stub
+                    if (session == Session.getActiveSession()) {
+                        if (user != null) {
+                        	getDataFromServer(user.getId(), session.getAccessToken());
+                        }   
+                    } 
+				}
+			}); 
+            Request.executeBatchAsync(request);
+        } 
     }
 
     private void loggedOutUIState() {
