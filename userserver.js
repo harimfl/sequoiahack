@@ -196,7 +196,7 @@ function createNewUser(req, res) {
     req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
     var snuid = req.params.snuid;
     var access_token = req.params.access_token;
-    pid = 
+    pid = getRandomOfApproxLength(8);
     User._create(pid, function(user){
     	user.snuid = snuid;
     	
@@ -266,6 +266,17 @@ function updateScore(req, res) {
     res.send(200);
 }
 
+
+function getRandomOfApproxLength(length) {
+    var rand = Math.random() * 10;
+    if(rand < 3) length = length - 1; 
+    else if(rand > 7) length =  length + 1;
+    return getRandomOfLength(length);
+}
+
+function getRandomOfLength(length) {
+    return (Math.floor(Math.pow(10, length+2) + Math.random() * 9 * Math.pow(10, length-1)));
+}
 function getlocallb(req, res) {
 	req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
 	req.assert('pid', 'User Id invalid').notEmpty();
