@@ -71,7 +71,7 @@ userSchema.statics.getCity = function(id, callback) {
 }
 
 userSchema.statics.getUserFromDb = function(id, callback) {
-	User.findOne({'id': pid }, function(err, user) {
+	User.findOne({'id': id }, function(err, user) {
 		if(!user || err) {
 			console.log("No such user", id, err);
 			callback(false);
@@ -91,7 +91,6 @@ userSchema.statics.getUserFromSnuid = function(snuid, callback) {
 }
 
 var User = mongoose.model('User', userSchema);
-
 
 function updateGlobalLeaderBoard(pid, miles) {
 	redis_client.zadd('leaderboard:global', miles, pid);
@@ -195,10 +194,9 @@ function getUser(req, res) {
 
 function createNewUser(req, res) {
     req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
-    req.assert('pid', 'User Id invalid').notEmpty();
-    var pid = req.params.pid;
     var snuid = req.params.snuid;
     var access_token = req.params.access_token;
+    pid = 
     User._create(pid, function(user){
     	user.snuid = snuid;
     	
@@ -247,12 +245,12 @@ function updateScore(req, res) {
 	req.assert('pid', 'User Id invalid').notEmpty();
     var pid = req.params.pid;
     User.updateScore(pid, score);
-    // updateGlobalLeaderBoard(pid, score);
-    // User.getCity(pid, function(city) {
-    // 	if(city && city != "") {
-    // 		updateLeaderBoard("leaderboard:" + city ,pid, score);
-    // 	}
-    // });
+    updateGlobalLeaderBoard(pid, score);
+    User.getCity(pid, function(city) {
+    	if(city && city != "") {
+    		updateLeaderBoard("leaderboard:" + city ,pid, score);
+    	}
+    });
     res.send(200);
 }
 
