@@ -49,10 +49,11 @@ var userSchema = new mongoose.Schema({
 }, {autoIndex: false});
 
 
-userSchema.statics._create = function(id, name) {
+userSchema.statics._create = function(id, cb) {
 	var user = new User;
 	user.id = id;
 	user.save();
+	cb(user);
 }
 
 userSchema.statics.updateScore = function(id, score) {
@@ -91,7 +92,6 @@ userSchema.statics.getUserFromSnuid = function(snuid, callback) {
 
 var User = mongoose.model('User', userSchema);
 
-User._create("testing");
 
 function updateGlobalLeaderBoard(pid, miles) {
 	redis_client.zadd('leaderboard:global', miles, pid);
@@ -152,7 +152,7 @@ function getUser(req, res) {
     
     if(snuid === undefined) snuid = "";
     User.getUserFromDb(req.params.pid, function(user) {
-    	user.snuid = suid;
+    	user.snuid = snuid;
     	
     	//do this async
     	if(snuid !== "") {
@@ -197,7 +197,48 @@ function createNewUser(req, res) {
     req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
     req.assert('pid', 'User Id invalid').notEmpty();
     var pid = req.params.pid;
-    User._create(pid);
+    var snuid = req.params.snuid;
+    var access_token = req.params.access_token;
+    User._create(pid, function(user){
+    	user.snuid = snuid;
+    	
+    	//do this async
+    	if(snuid === undefined) snuid = "";
+    	if(snuid !== "") {
+    		user.access_token = access_token;
+    		var currTime = Date.now();
+	        if(!user.sn_friend_list_last_updated_at ||
+	        ((currTime - user.sn_friend_list_last_updated_at)/1000 > MIN_TIME_BEFORE_SN_FRIENDS_REFRESH_IN_SECONDS)) {
+		    	getFacebookFriends(snuid, access_token, function(result){
+		    		var progress = result.length;
+		    		result.forEach(function(item) {
+			    		User.getUserFromSnuid(item.id,function(friend) {
+			    			if(friend) {
+			    				if(friend.sn_friend_list.indexOf(user.id + '_' + user.snuid + '_' + user.name) < 0 ) {
+			    					friend.sn_friend_list.push(user.id + '_' + user.snuid + '_' + user.name);
+			    				}
+			    				if(user.sn_friend_list.indexOf(friend.id + '_' + friend.snuid + '_' + friend.name) < 0 ) {
+			    					user.sn_friend_list.push(friend.id + '_' + friend.snuid + '_' + friend.name);
+			    				}
+			    				friend.save();
+			    			}
+			    			if(--progress == 0 ){
+			    				user.sn_friend_list_last_updated_at = currTime;
+			    				user.save();
+			    			}
+			    		});
+			    	});
+
+		    	});
+    		}
+    	}
+	    var retData = {};
+	    retData.snuid = user.snuid;
+	    retData.sn_name = user.sn_name;
+	    retData.total_miles = user.meta.total_miles;
+	    retData.city = user.city;
+		res.send(JSON.stringify(retData));
+    });
     res.send(200);
 }
 
@@ -206,12 +247,12 @@ function updateScore(req, res) {
 	req.assert('pid', 'User Id invalid').notEmpty();
     var pid = req.params.pid;
     User.updateScore(pid, score);
-    updateGlobalLeaderBoard(pid, score);
-    User.getCity(pid, function(city) {
-    	if(city && city != "") {
-    		updateLeaderBoard("leaderboard:" + city ,pid, score);
-    	}
-    });
+    // updateGlobalLeaderBoard(pid, score);
+    // User.getCity(pid, function(city) {
+    // 	if(city && city != "") {
+    // 		updateLeaderBoard("leaderboard:" + city ,pid, score);
+    // 	}
+    // });
     res.send(200);
 }
 
@@ -221,8 +262,41 @@ function getlocallb(req, res) {
     var pid = req.params.pid;
     User.getCity(pid, function(city) {
     	if(city && city != "") {
-    		getLeaderboardWinners("leaderboard:" + city, function(result){
+
+			var retObj = {};
+			retObj['top'] = [];
+
+    		getzrevrange("leaderboard:" + city, 1, 3, function(result){
     			console.log("Gitesh result", result);
+    			for(var i = 0;i<3;i++){
+    				User.getUserFromDb(result[i], function(user) {
+	    				temp['name'] = user.name;
+						temp['snuid'] = user.snuid;
+						temp['olamiles'] = user.olamiles;
+						temp['rank'] = i+1;
+						retObj['top'].push(temp);
+    				});
+    			}
+
+	    		getRank(pid,function(user_rank){
+	    			var min = user_rank > 14 ? user_rank:14;
+	    			retObj['rest'] = [];
+	    			var progress = 21;
+	    			getzrevrange("leaderboard:" + city, min - 10, min + 11, function(result){
+						for(var i = min - 10; i < min + 11;) {
+							User.getUserFromDb(result[i], function(user) {
+			    				temp['name'] = user.name;
+								temp['snuid'] = user.snuid;
+								temp['olamiles'] = user.olamiles;
+								temp['rank'] = i+1;
+								retObj['top'].push(temp);
+								if(--progress == 0){
+									res.send(JSON.stringify(retObj));	
+								}
+		    				});
+						}
+					});
+	    		});
     		});
     	}
     });
@@ -274,16 +348,16 @@ function getfriendlb(req, res) {
 					temp['rank'] = i+1;
 					retObj['rest'].push(temp);
 				}
-
+				res.send(JSON.stringify(retObj));
    			});
     	}
     });
 }
 
-getLeaderboardWinners = function(leaderboard, callback) {
+getzrevrange = function(leaderboard, min, max, callback) {
     var chain = redis_client.multi();
     
-    chain.zrevrange(leaderboard, 0, 2, 'withscores')
+    chain.zrevrange(leaderboard, min-1, max -1, 'withscores')
     chain.exec(function(err, result) {
         if(err || !result) {
             winston.info("isTournamentFinished : cant find the users in redis!");
@@ -294,6 +368,15 @@ getLeaderboardWinners = function(leaderboard, callback) {
     });
 }
 
+getRank = function(pid) {
+
+	redis_client.zrevrank(pid, function(err, reply) {
+		if (!err && reply) {
+			return callback(reply);
+		}
+		return callback(false);
+	});
+};
 
 getFriendsChips = function(friend_ids, callback) {
 	var returnList = [];
