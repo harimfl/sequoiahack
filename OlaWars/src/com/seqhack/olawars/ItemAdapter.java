@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -78,14 +79,34 @@ public View getView(int position, View convertView, ViewGroup parent) {
         holder.playerRank.setText(itemdata.getPlayerRank());
         if (Integer.parseInt(itemdata.getPlayerRank()) == 1) {
         	row.findViewById(R.id.front).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_1st));
+        	row.findViewById(R.id.imageView3).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_menu_divider));
+        	holder.playerRank.setTextColor(Color.parseColor("#724c00"));
+        	holder.itemName.setTextColor(Color.parseColor("#724c00"));
+        	holder.olaPoints.setTextColor(Color.parseColor("#724c00"));
         } else if (Integer.parseInt(itemdata.getPlayerRank()) == 2) {
         	row.findViewById(R.id.front).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_2nd));
+        	row.findViewById(R.id.imageView3).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_menu_divider));
+        	holder.playerRank.setTextColor(Color.parseColor("#030070"));
+        	holder.itemName.setTextColor(Color.parseColor("#030070"));
+        	holder.olaPoints.setTextColor(Color.parseColor("#030070"));
         } else if (Integer.parseInt(itemdata.getPlayerRank()) == 3) {
         	row.findViewById(R.id.front).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_3rd));
+        	row.findViewById(R.id.imageView3).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_menu_divider));
+        	holder.playerRank.setTextColor(Color.parseColor("#473e00"));
+        	holder.itemName.setTextColor(Color.parseColor("#473e00"));
+        	holder.olaPoints.setTextColor(Color.parseColor("#473e00"));
         } else if (itemdata.getSnuid() == Olawars._staticInstance.regid) {
         	row.findViewById(R.id.front).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_player_slot));
+        	row.findViewById(R.id.imageView3).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_divider));
+        	holder.playerRank.setTextColor(Color.parseColor("#175600"));
+        	holder.itemName.setTextColor(Color.parseColor("#175600"));
+        	holder.olaPoints.setTextColor(Color.parseColor("#175600"));
         } else {
         	row.findViewById(R.id.front).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_opponent_slot));
+        	row.findViewById(R.id.imageView3).setBackground(Olawars._staticInstance.getResources().getDrawable(R.drawable.olawars_divider));
+        	holder.playerRank.setTextColor(Color.parseColor("#175600"));
+        	holder.itemName.setTextColor(Color.parseColor("#175600"));
+        	holder.olaPoints.setTextColor(Color.parseColor("#175600"));
         }
         
         holder.button1.setOnClickListener(new View.OnClickListener() {
