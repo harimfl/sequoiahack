@@ -7,12 +7,14 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.view.View;
@@ -121,7 +123,9 @@ public class GCMIntentService extends GCMBaseIntentService
         // Create Notification Manager
         NotificationManager notificationmanager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         // Build Notification with Notification Manager
-        notificationmanager.notify(1, builder.build());
+        Notification notification = builder.build();
+        notification.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.car_crash);
+        notificationmanager.notify(1, notification);
     }
     
 	public Bitmap getBitmapFromURL(String strURL, String senderId) {

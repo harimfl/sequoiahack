@@ -1,6 +1,6 @@
 {
    "top":[
-      [
+      
          {
          	"rank":1,
             "olamiles":210010,
@@ -8,8 +8,8 @@
             "snuid":"100000500888579",
             "type":"chips"
          }
-      ],
-      [
+      ,
+      
          {
          	"rank":2,
             "olamiles":156007,
@@ -17,8 +17,8 @@
             "snuid":"524429901",
             "type":"chips"
          }
-      ],
-      [
+      ,
+      
          {
          	"rank":3,
             "olamiles":109088,
@@ -26,10 +26,10 @@
             "snuid":"1023625423",
             "type":"chips"
          }
-      ]
+      
    ],
-   "regular": [
-   		      [
+   "rest": [
+   		      
 		         {
 		         	"rank":12,
 		            "olamiles":70000,
@@ -37,8 +37,8 @@
 		            "snuid":"1023625423",
 		            "type":"chips"
 		         }
-		      ],
-		      [
+		      ,
+		      
 		         {
 		         	"rank":13,
 		            "olamiles":55890,
@@ -46,8 +46,8 @@
 		            "snuid":"10037642",
 		            "type":"chips"
 		         }
-		      ],
-		      		      [
+		      ,
+		      		      
 		         {
 		         	"rank":14,
 		            "olamiles":55000,
@@ -55,7 +55,7 @@
 		            "snuid":"641725139",
 		            "type":"chips"
 		         }
-		      ],		      [
+		      ,		      
 		         {
 		         	"rank":15,
 		            "olamiles":45087,
@@ -63,7 +63,7 @@
 		            "snuid":"1533535238",
 		            "type":"chips"
 		         }
-		      ],		      [
+		      ,		      
 		         {
 		         	"rank":16,
 		            "olamiles":41087,
@@ -71,7 +71,7 @@
 		            "snuid":"555445198",
 		            "type":"chips"
 		         }
-		      ],		      [
+		      ,		      
 		         {
 		         	"rank":17,
 		            "olamiles":30876,
@@ -79,7 +79,7 @@
 		            "snuid":"100000935989152",
 		            "type":"chips"
 		         }
-		      ],		      [
+		      ,		      
 		         {
 		         	"rank":18,
 		            "olamiles":19776,
@@ -87,7 +87,7 @@
 		            "snuid":"1501753385",
 		            "type":"chips"
 		         }
-		      ],   [
+		      ,   
 		         {
 		         	"rank":19,
 		            "olamiles":12000,
@@ -95,7 +95,7 @@
 		            "snuid":"716008541",
 		            "type":"chips"
 		         }
-		      ] ,   [
+		       ,   
 		         {
 		         	"rank":20,
 		            "olamiles":11502,
@@ -103,6 +103,6 @@
 		            "snuid":"100001796716540",
 		            "type":"chips"
 		         }
-		      ]
+		      
    ]
 }

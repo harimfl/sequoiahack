@@ -1,33 +1,29 @@
 package com.seqhack.olawars;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 import android.util.Log;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.simple.JSONObject;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONValue;
-import org.json.simple.parser.ParseException;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
@@ -42,20 +38,10 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v4.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -64,6 +50,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RemoteViews;
 import android.widget.TextView;
+
+import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
+import com.fortysevendeg.swipelistview.SwipeListView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class Olawars extends Activity {
 
@@ -187,7 +179,7 @@ public class Olawars extends Activity {
         swipelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
 	
         swipelistview.setAdapter(adapter);
-        onJsonResponse("");
+        getDataFromServer();
     }
 
     @Override
@@ -247,10 +239,50 @@ public class Olawars extends Activity {
     }
 
     
+    public void getDataFromServer() {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+            	String ssa = "http://ec2-54-169-61-49.ap-southeast-1.compute.amazonaws.com:4000/user/getfriendlb";
+                HttpGet verifyRequest = new HttpGet(ssa);  
+                DefaultHttpClient client = new DefaultHttpClient();
+                try {
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                    nameValuePairs.add(new BasicNameValuePair("pid", "123134"));
+                    
+                    HttpResponse response = client.execute(verifyRequest);
+                    if(response.getStatusLine().getStatusCode() == 200) {
+                        HttpEntity entity = response.getEntity();
+                        if(entity != null){
+                            InputStream inputStream = entity.getContent();
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                            StringBuilder stringBuilder = new StringBuilder();
+
+                            String ligneLue = bufferedReader.readLine();
+                            while(ligneLue != null){
+                                stringBuilder.append(ligneLue + " \n");
+                                ligneLue = bufferedReader.readLine();
+                            }
+                            bufferedReader.close();
+                            final String params = stringBuilder.toString();
+                            _staticInstance.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    onJsonResponse(params);
+                                }
+                            });
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+}
+    
     public void onJsonResponse(String json) {
     	JSONParser parser=new JSONParser();
         Object obj = null;
-        json = "{	\"top\" : [			{				\"name\" : \"hari\",				\"rank\" : 1,				\"snuid\" : \"1623842314\",				\"chips\"	: 3444			},			{				\"name\" : \"gitesh\",				\"rank\" : 2,				\"snuid\" : \"1283286538\",				\"chips\"	: 5444			},			{				\"name\" : \"srinaths\",				\"rank\" : 3,				\"snuid\" : \"524740442\",				\"chips\"	: 7444			}		],	\"rest\" : [			{				\"name\" : \"srinath1\",				\"rank\" : 6,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3144			},			{				\"name\" : \"srinath2\",				\"rank\" : 8,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3644			},			{				\"name\" : \"srinath3\",				\"rank\" : 9,				\"snuid\" : \"134593487234987\",				\"chips\"	: 3044			}	]}";
+//        json = "{	\"top\" : [			{				\"name\" : \"hari\",				\"rank\" : 1,				\"snuid\" : \"1623842314\",				\"chips\"	: 3444			},			{				\"name\" : \"gitesh\",				\"rank\" : 2,				\"snuid\" : \"1283286538\",				\"chips\"	: 5444			},			{				\"name\" : \"srinaths\",				\"rank\" : 3,				\"snuid\" : \"524740442\",				\"chips\"	: 7444			}		],	\"rest\" : [			{				\"name\" : \"srinath1\",				\"rank\" : 6,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3144			},			{				\"name\" : \"srinath2\",				\"rank\" : 8,				\"snuid\" : \"134345987234987\",				\"chips\"	: 3644			},			{				\"name\" : \"srinath3\",				\"rank\" : 9,				\"snuid\" : \"134593487234987\",				\"chips\"	: 3044			}	]}";
 		try {
 			obj = parser.parse(json);
 		} catch (ParseException e) {
@@ -288,7 +320,7 @@ public class Olawars extends Activity {
     }
     
     public void addRowToLeaderBoard(String name, String rank, String snuid, String chips) {
-    	itemData.add(new ItemRow(name, rank, snuid, chips, null));
+    	itemData.add(new ItemRow(name, chips, snuid, rank, null));
     }
 	
     public int convertDpToPixel(float dp) {

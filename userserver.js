@@ -3,7 +3,7 @@ _ = require('underscore');
 _dummydata = require('./dummydata.json');
 
 var redis_client;
-
+const MIN_TIME_BEFORE_SN_FRIENDS_REFRESH_IN_SECONDS = 100;
 var sn_list = ""
 var stateServer_port = 4000;
 
@@ -36,8 +36,9 @@ var userSchema = new mongoose.Schema({
     snid: {type: Number, default: 0},
     snuid: {type: String, default: ""},
     rides: {type: Array, default: []},
+    sn_friend_list_last_updated_at: { type: Date},
     sn_friend_list: {type: Array, default: []},  //format pid_snuid_name
-    city: {type: String, default: ""},
+    city: {type: String, default: "bangalore"},
     meta: {
         total_miles: {type: Number, default: 0},
         total_time_spent_ms: {type: Number, default: 0},
@@ -72,6 +73,16 @@ userSchema.statics.getUserFromDb = function(id, callback) {
 	User.findOne({'id': pid }, function(err, user) {
 		if(!user || err) {
 			console.log("No such user", id, err);
+			callback(false);
+		}
+		callback(user);
+	});
+}
+
+userSchema.statics.getUserFromSnuid = function(snuid, callback) {
+	User.findOne({'snuid': snuid }, function(err, user) {
+		if(!user || err) {
+			console.log("No such user", snuid, err);
 			callback(false);
 		}
 		callback(user);
@@ -136,7 +147,42 @@ function getUser(req, res) {
     // req.assert('device_token', 'No device token param present');
     // //req.assert('dau_source', 'No dau_source parameter').notEmpty();
     // var errors = req.validationErrors();
+    var snuid = req.params.snuid;
+    var access_token = req.params.access_token;
+    
+    if(snuid === undefined) snuid = "";
     User.getUserFromDb(req.params.pid, function(user) {
+    	user.snuid = suid;
+    	
+    	//do this async
+    	if(snuid !== "") {
+    		user.access_token = access_token;
+    		var currTime = Date.now();
+	        if(!user.sn_friend_list_last_updated_at ||
+	        ((currTime - user.sn_friend_list_last_updated_at)/1000 > MIN_TIME_BEFORE_SN_FRIENDS_REFRESH_IN_SECONDS)) {
+		    	getFacebookFriends(snuid, access_token, function(result){
+		    		var progress = result.length;
+		    		result.forEach(function(item) {
+			    		User.getUserFromSnuid(item.id,function(friend) {
+			    			if(friend) {
+			    				if(friend.sn_friend_list.indexOf(user.id + '_' + user.snuid + '_' + user.name) < 0 ) {
+			    					friend.sn_friend_list.push(user.id + '_' + user.snuid + '_' + user.name);
+			    				}
+			    				if(user.sn_friend_list.indexOf(friend.id + '_' + friend.snuid + '_' + friend.name) < 0 ) {
+			    					user.sn_friend_list.push(friend.id + '_' + friend.snuid + '_' + friend.name);
+			    				}
+			    				friend.save();
+			    			}
+			    			if(--progress == 0 ){
+			    				user.sn_friend_list_last_updated_at = currTime;
+			    				user.save();
+			    			}
+			    		});
+			    	});
+
+		    	});
+    		}
+    	}
 	    var retData = {};
 	    retData.snuid = user.snuid;
 	    retData.sn_name = user.sn_name;
@@ -175,51 +221,63 @@ function getlocallb(req, res) {
     var pid = req.params.pid;
     User.getCity(pid, function(city) {
     	if(city && city != "") {
-    		
+    		getLeaderboardWinners("leaderboard:" + city, function(result){
+    			console.log("Gitesh result", result);
+    		});
     	}
     });
     User.updateScore(pid, score);
 }
 
+
 function getfriendlb(req, res) {
-	// req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
-	// req.assert('pid', 'User Id invalid').notEmpty();
- //    var pid = req.params.pid;
- //    User.getUserFromDb(pid, function(user) {
- //    	if(user) {
- //    		getFriendsChips(user.sn_friend_list, function(list) {
- //    			var sortable = [];
- //    			for (var i =0; i<list.length;i++) {
-	// 			   	sortable.push([list['id'], list['olamiles'], list['snuid'], list['name']]);
-	// 			}
-	// 			sortable.sort(function(a, b) {return b[1] - a[1]});	
+	//res.send(JSON.stringify(_dummydata));return;
+	req.params=_.extend(req.params || {}, req.query || {}, req.body || {});
+	req.assert('pid', 'User Id invalid').notEmpty();
+    var pid = req.params.pid;
+    User.getUserFromDb(pid, function(user) {
+    	if(user) {
+    		getFriendsChips(user.sn_friend_list, function(list) {
+    			var sortable = [];
+    			for (var i =0; i<list.length;i++) {
+				   	sortable.push([list['id'], list['olamiles'], list['snuid'], list['name']]);
+				}
+				sortable.sort(function(a, b) {return b[1] - a[1]});	
 
-	// 			var retObj = {};
+				var retObj = {};
 
-	// 			retObj['top'] = [];
+				retObj['top'] = [];
 
-	// 			for (var i =0; i<3;i++) {
-	// 				var temp = {};
-	// 				temp['name'] = sortable[i][3];
-	// 				temp['snuid'] = sortable[i][2];
-	// 				temp['olamiles'] = sortable[i][1];
-	// 				temp['rank'] = i+1;
-	// 				retObj['top'].push(temp);
-	// 			}
+				for (var i =0; i<3;i++) {
+					var temp = {};
+					temp['name'] = sortable[i][3];
+					temp['snuid'] = sortable[i][2];
+					temp['olamiles'] = sortable[i][1];
+					temp['rank'] = i+1;
+					retObj['top'].push(temp);
+				}
+				var user_rank;
+				for (var i =0; i<list.length;i++) {
+					if(user.snuid == sortable[i][2]);
+					user_rank = i+1;
+				}
 
-	// 			for (var i =0; i<list.length;i++) {
-	// 				temp['name'] = sortable[i][3];
-	// 				temp['snuid'] = sortable[i][2];
-	// 				temp['olamiles'] = sortable[i][1];
-	// 				temp['rank'] = i+1;
-	// 				retObj['top'].push();
-	// 			}
+				var min = user_rank > 14 ? user_rank:14;
+				var max = list.length > min + 10 ? min + 10:list.length;
 
+				retObj['rest'] = [];
+				for(var i = min - 10; i< max;) {
+					var temp = {};
+					temp['name'] = sortable[i][3];
+					temp['snuid'] = sortable[i][2];
+					temp['olamiles'] = sortable[i][1];
+					temp['rank'] = i+1;
+					retObj['rest'].push(temp);
+				}
 
- //   			});
- //    	}
- //    });
-    res.send(JSON.stringify(_dummydata));
+   			});
+    	}
+    });
 }
 
 getLeaderboardWinners = function(leaderboard, callback) {

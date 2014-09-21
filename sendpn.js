@@ -1,11 +1,12 @@
 gcm = require('node-gcm');	
 var gcmsender = new gcm.Sender('AIzaSyDJu-OKmyz-MOHZSKIURSGSg_gFrsRpAeU');
 var duid = "APA91bGZi40M_iQUzPIAHRrRsfmyREAsCs_Yfg5GCiIuBxz_iDwJzdal2Y0qe9Dh8u0aUNltGNjlSeA4j6Vfqyc6qivN2YWBm3qRnxbj41GJCAFNx3-cafnMdWNrbc8MaAxJQroZH2Pj1F2aQwYd9IlulM7Es5HdCQ";
-var type = 1;	
+var type = 2;	
 var msg = new gcm.Message();
 msg.collapseKey = '2';
 msg.delayWhileIdle = true;
 msg.timeToLive = parseInt(1000);
+msg.timeToLive = 0;
 //1 -- You Ran Over <param>
 //2 -- <param> Ran You Over
 //3 -- You Ran Over <param> People
