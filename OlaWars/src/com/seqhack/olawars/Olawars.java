@@ -18,6 +18,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -30,6 +32,9 @@ import org.json.simple.parser.JSONParser;
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
 import com.seqhack.olawars.ItemAdapter.NewsHolder;
+import com.sromku.simple.fb.Permission;
+import com.sromku.simple.fb.SimpleFacebook;
+import com.sromku.simple.fb.listeners.OnLoginListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -56,10 +61,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RemoteViews;
+import android.widget.TextView;
 
 public class Olawars extends Activity {
 
+    protected static final String TAG = Olawars.class.getName();
 	SwipeListView swipelistview;
 	ItemAdapter adapter;
 	List<ItemRow> itemData;
@@ -72,11 +80,15 @@ public class Olawars extends Activity {
     Context context;
     String regid = "";
 	
+    private Button mButtonLogin;
+    private TextView mTextStatus;
+    private SimpleFacebook mSimpleFacebook;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_olawars);
-        
+
         context = getApplicationContext();
         
         if (checkPlayServices()) {
@@ -93,6 +105,20 @@ public class Olawars extends Activity {
         }
         
         swipelistview=(SwipeListView)findViewById(R.id.example_swipe_lv_list); 
+
+        mButtonLogin = (Button) findViewById(R.id.button_login);
+        mTextStatus = (TextView) findViewById(R.id.text_status);
+        mSimpleFacebook = SimpleFacebook.getInstance(this);
+        setLogin();
+
+        if (mSimpleFacebook.isLogin()) {
+            loggedInUIState();
+        }
+        else {
+            loggedOutUIState();
+        }
+        
+
         itemData=new ArrayList<ItemRow>();
         adapter=new ItemAdapter(this,R.layout.custom_row,itemData);
         _staticInstance = this;
@@ -163,6 +189,63 @@ public class Olawars extends Activity {
         swipelistview.setAdapter(adapter);
         onJsonResponse("");
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mSimpleFacebook.onActivityResult(this, requestCode, resultCode, data);
+    }
+
+
+    /**
+     * Login example.
+     */
+    private void setLogin() {
+        // Login listener
+        final OnLoginListener onLoginListener = new OnLoginListener() {
+
+            @Override
+            public void onFail(String reason) {
+                mTextStatus.setText(reason);
+                Log.w(TAG, "Failed to login");
+            }
+
+            @Override
+            public void onException(Throwable throwable) {
+                mTextStatus.setText("Exception: " + throwable.getMessage());
+                Log.e(TAG, "Bad thing happened", throwable);
+            }
+
+            @Override
+            public void onThinking() {
+                // show progress bar or something to the user while login is
+                // happening
+                mTextStatus.setText("Thinking...");
+            }
+
+            @Override
+            public void onLogin() {
+                // change the state of the button or do whatever you want
+                mTextStatus.setText("Howdy!!");
+                //Intent i = new Intent(Olawars._staticInstance, Olawars.class);                      
+                //startActivity(i);
+                loggedInUIState();
+            }
+
+            @Override
+            public void onNotAcceptingPermissions(Permission.Type type) {
+//              toast(String.format("You didn't accept %s permissions", type.name()));
+            }
+        };
+
+        mButtonLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                mSimpleFacebook.login(onLoginListener);
+            }
+        });
+    }
+
     
     public void onJsonResponse(String json) {
     	JSONParser parser=new JSONParser();
@@ -360,6 +443,20 @@ public class Olawars extends Activity {
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
+    }
+
+    private void loggedInUIState() {
+        mButtonLogin.setEnabled(false);
+        mButtonLogin.setVisibility(View.GONE);
+        swipelistview.setVisibility(View.VISIBLE);
+        mTextStatus.setText("");
+    }
+
+    private void loggedOutUIState() {
+        mButtonLogin.setVisibility(View.VISIBLE);
+        mButtonLogin.setEnabled(true);
+        swipelistview.setVisibility(View.GONE);
+        mTextStatus.setText("");
     }
     
 //    @Override
