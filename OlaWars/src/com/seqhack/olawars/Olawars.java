@@ -502,6 +502,22 @@ public class Olawars extends Activity {
 //        mTextStatus.setText("");
     }
     
+    public void friendListClickHandler(View v) {
+        Log.d("tag","local");
+        View x = v.getRootView();
+        View butt = Olawars._staticInstance.findViewById(R.id.imageView6);
+        butt.setVisibility(View.VISIBLE);
+        butt = (View) v.getRootView().findViewById(R.id.imageView5);
+        butt.setVisibility(View.INVISIBLE);
+    }
+    public void localListClickHandler(View v) {
+        Log.d("tag","friend");
+        View butt = Olawars._staticInstance.findViewById(R.id.imageView6);
+        butt.setVisibility(View.INVISIBLE);
+        butt = (View) v.getRootView().findViewById(R.id.imageView5);
+        butt.setVisibility(View.VISIBLE);
+    }
+    
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
         	loggedInUIState();
