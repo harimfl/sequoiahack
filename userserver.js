@@ -310,11 +310,9 @@ function getlocallb(req, res) {
 	    				temp['name'] = user.name;
 						temp['snuid'] = user.snuid;
 						temp['olamiles'] = user.total_miles;
-						temp['rank'] = i+1;
+						temp['rank'] = k++;
 						retObj['top'].push(temp);
 						console.log("Gts", temp);
-						k++;
-
     			if(k == 3) {
     			console.log("Gitesh ", retObj);
 	    		getRank(pid,function(user_rank){
@@ -323,13 +321,15 @@ function getlocallb(req, res) {
 	    			var progress = 21;
 	    			getzrevrange("leaderboard:" + city, min - 10, min + 11, function(result){
 						console.log("Gitesh 2", result);
-						for(var i = min - 10; i < min + 11;) {
+						for(var i = min - 10; i < min + 11; i++) {
 							User.getUserFromDb(result[i], function(user) {
-			    				temp['name'] = user.name;
-								temp['snuid'] = user.snuid;
-								temp['olamiles'] = user.total_miles;
-								temp['rank'] = i+1;
-								retObj['top'].push(temp);
+								if(user){
+				    				temp['name'] = user.name;
+									temp['snuid'] = user.snuid;
+									temp['olamiles'] = user.total_miles;
+									temp['rank'] = k++;
+									retObj['rest'].push(temp);
+								}
 								if(--progress == 0){
 									res.send(JSON.stringify(retObj));	
 								}
