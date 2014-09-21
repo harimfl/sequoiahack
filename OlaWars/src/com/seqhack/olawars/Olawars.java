@@ -5,17 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import android.util.Log;
-
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONArray;
@@ -23,33 +19,26 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
-import com.fortysevendeg.swipelistview.SwipeListView;
-import com.seqhack.olawars.ItemAdapter.NewsHolder;
-import com.sromku.simple.fb.Permission;
-import com.sromku.simple.fb.SimpleFacebook;
-import com.sromku.simple.fb.listeners.OnLoginListener;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
 import com.google.android.gms.common.ConnectionResult;
@@ -73,11 +62,25 @@ public class Olawars extends Activity {
 	
     private Button mButtonLogin;
     private TextView mTextStatus;
-    private SimpleFacebook mSimpleFacebook;
-
+    
+    private Session.StatusCallback callback;
+    private UiLifecycleHelper uiHelper;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        
+        callback = new Session.StatusCallback() {
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+                onSessionStateChange(session, state, exception);
+            }
+        };
+        
+        uiHelper = new UiLifecycleHelper(this, callback);
+        uiHelper.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_olawars);
 
         context = getApplicationContext();
@@ -99,10 +102,30 @@ public class Olawars extends Activity {
 
         mButtonLogin = (Button) findViewById(R.id.button_login);
         mTextStatus = (TextView) findViewById(R.id.text_status);
-        mSimpleFacebook = SimpleFacebook.getInstance(this);
-        setLogin();
+        
+        
+        mButtonLogin.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Log.e("asdf", "ffff");
+				Session session = Session.getActiveSession();
+			    if (!session.isOpened() && !session.isClosed()) {
+			        session.openForRead(new Session.OpenRequest(_staticInstance)
+			            .setPermissions(/*Arrays.asList("public_profile")*/)
+			            .setCallback(callback));
+			    } else {
+			        Session.openActiveSession(_staticInstance, true, callback);
+			    }
+				
+			}
+		});
+        
+        
+        //mSimpleFacebook = SimpleFacebook.getInstance(this);
+        //setLogin();
 
-        if (false && mSimpleFacebook.isLogin()) {
+        if (false /*&& mSimpleFacebook.isLogin()*/) {
             loggedInUIState();
         }
         else {
@@ -178,65 +201,37 @@ public class Olawars extends Activity {
         swipelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
 	
         swipelistview.setAdapter(adapter);
-        getDataFromServer();
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        uiHelper.onResume();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mSimpleFacebook.onActivityResult(this, requestCode, resultCode, data);
+        uiHelper.onActivityResult(requestCode, resultCode, data);
     }
-
-
-    /**
-     * Login example.
-     */
-    private void setLogin() {
-        // Login listener
-        final OnLoginListener onLoginListener = new OnLoginListener() {
-
-            @Override
-            public void onFail(String reason) {
-                mTextStatus.setText(reason);
-                Log.w(TAG, "Failed to login");
-            }
-
-            @Override
-            public void onException(Throwable throwable) {
-                mTextStatus.setText("Exception: " + throwable.getMessage());
-                Log.e(TAG, "Bad thing happened", throwable);
-            }
-
-            @Override
-            public void onThinking() {
-                // show progress bar or something to the user while login is
-                // happening
-                mTextStatus.setText("Thinking...");
-            }
-
-            @Override
-            public void onLogin() {
-                // change the state of the button or do whatever you want
-                mTextStatus.setText("Howdy!!");
-                //Intent i = new Intent(Olawars._staticInstance, Olawars.class);                      
-                //startActivity(i);
-                loggedInUIState();
-            }
-
-            @Override
-            public void onNotAcceptingPermissions(Permission.Type type) {
-//              toast(String.format("You didn't accept %s permissions", type.name()));
-            }
-        };
-
-        mButtonLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                mSimpleFacebook.login(onLoginListener);
-            }
-        });
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        uiHelper.onPause();
     }
-
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        uiHelper.onDestroy();
+    }
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        uiHelper.onSaveInstanceState(outState);
+    }
     
     public void getDataFromServer() {
         Thread t = new Thread(new Runnable() {
@@ -279,7 +274,7 @@ public class Olawars extends Activity {
             }
         });
         t.start();
-}
+    }
     
     public void onJsonResponse(String json) {
     	JSONParser parser=new JSONParser();
@@ -484,6 +479,7 @@ public class Olawars extends Activity {
         mButtonLogin.setVisibility(View.GONE);
         swipelistview.setVisibility(View.VISIBLE);
         mTextStatus.setText("");
+        getDataFromServer();
     }
 
     private void loggedOutUIState() {
@@ -493,11 +489,15 @@ public class Olawars extends Activity {
         mTextStatus.setText("");
     }
     
-//    @Override
-//    public void onPause() {
-//    	if (mWakeLock.isHeld())
-//    	    mWakeLock.release();
-//        super.onPause();
-//    }
-//    
+    private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+        if (state.isOpened()) {
+        	loggedInUIState();
+            Log.i(TAG, "Logged in...");
+        } else if (state.isClosed()) {
+        	loggedOutUIState();
+            Log.i(TAG, "Logged out...");
+        } else {
+        	Log.i(TAG, "Doing something...");
+        }
+    }
 }
