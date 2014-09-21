@@ -231,7 +231,7 @@ public class Olawars extends Activity {
     public void getDataFromServer(final String snuid, final String snat) {
         Thread t = new Thread(new Runnable() {
             public void run() {
-            	String ssa = "http://ec2-54-169-61-49.ap-southeast-1.compute.amazonaws.com:4000/user/getfriendlb";
+            	String ssa = "http://ec2-54-169-61-49.ap-southeast-1.compute.amazonaws.com:4000/user/getsn";
                 HttpGet verifyRequest = new HttpGet(ssa);  
                 DefaultHttpClient client = new DefaultHttpClient();
                 try {
